@@ -2,142 +2,116 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#18191f">
-<meta name="description" content="Habitly - Daily habit tracker with streaks, buddy characters and achievements.">
+<meta name="description" content="Habitly - Daily habit tracker with streaks, buddies and achievements.">
 <title>Habitly</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <style>
-:root{--bg:#18191f;--card:#23252e;--b:rgba(255,255,255,0.09);--ink:#fff;--muted:#9096a2;
+:root{--bg:#18191f;--card:#23252e;--bdr:rgba(255,255,255,0.09);--ink:#fff;--muted:#9096a2;
   --green:#4cd964;--gdim:rgba(76,217,100,0.14);--accent:#a78bfa;--adim:rgba(167,139,250,0.14);
   --yellow:#ffd60a;--red:#ff5a5a;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
-html,body,#root{min-height:100vh;background:var(--bg);color:var(--ink);
+html,body{min-height:100vh;background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   overscroll-behavior:none;-webkit-font-smoothing:antialiased;}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:radial-gradient(ellipse at 15% 0%,rgba(167,139,250,0.12) 0%,transparent 50%),
              radial-gradient(ellipse at 88% 100%,rgba(76,217,100,0.09) 0%,transparent 50%);}
-.app{position:relative;z-index:1;max-width:540px;margin:0 auto;padding:0 0 88px;}
+/* LAYOUT */
+.app{position:relative;z-index:1;max-width:540px;margin:0 auto;padding:0 0 90px;}
 @media(min-width:700px){.app{max-width:760px;}}
 @media(min-width:1024px){.app{max-width:1020px;}}
 @media(min-width:1440px){.app{max-width:1280px;}}
-@media(min-width:1920px){.app{max-width:1600px;}}
-
 /* LOADER */
-.loader{position:fixed;inset:0;z-index:999;background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-  transition:opacity .5s;}
-.loader.hide{opacity:0;pointer-events:none;}
-.ld-logo{font-size:52px;font-weight:900;letter-spacing:-1px;
+#loader{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s;}
+#loader.hide{opacity:0;pointer-events:none;}
+.ld-logo{font-size:50px;font-weight:900;letter-spacing:-1px;
   background:linear-gradient(135deg,var(--accent),var(--green));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.ld-spin{width:36px;height:36px;border-radius:50%;
-  border:3px solid rgba(167,139,250,0.2);border-top-color:var(--accent);
-  animation:spin .8s linear infinite;}
+.ld-spin{width:32px;height:32px;border-radius:50%;border:3px solid rgba(167,139,250,0.2);
+  border-top-color:var(--accent);animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.ld-sub{font-size:13px;color:var(--muted);}
-
 /* HEADER */
 .hdr{display:flex;align-items:flex-start;justify-content:space-between;padding:52px 16px 10px;gap:12px;}
 .hdr-l{min-width:0;flex:1;}
 .hdr-title{font-size:clamp(22px,5vw,30px);font-weight:900;letter-spacing:-0.5px;
   background:linear-gradient(135deg,#fff 60%,var(--accent));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .hdr-sub{color:var(--muted);font-size:12px;margin-top:3px;}
-.hdr-av{width:44px;height:44px;border-radius:50%;background:var(--adim);
-  border:2px solid var(--accent);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
+.hdr-av{width:44px;height:44px;border-radius:50%;background:var(--adim);border:2px solid var(--accent);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
   font-size:17px;font-weight:800;overflow:hidden;cursor:pointer;
   box-shadow:0 0 14px rgba(167,139,250,0.3);transition:transform .2s;}
 .hdr-av:active{transform:scale(0.9);}
 .hdr-av img{width:100%;height:100%;object-fit:cover;}
-
 /* SCORE */
-.score-card{margin:0 14px 10px;
-  background:linear-gradient(135deg,#1e2030,#252838);
-  border:1px solid rgba(167,139,250,0.2);border-radius:22px;
-  padding:16px 18px;display:flex;align-items:center;gap:14px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);}
-.score-num{font-size:clamp(38px,8vw,52px);font-weight:900;line-height:1;flex-shrink:0;transition:color .4s;}
+.score-card{margin:0 14px 10px;background:linear-gradient(135deg,#1e2030,#252838);
+  border:1px solid rgba(167,139,250,0.2);border-radius:22px;padding:16px 18px;
+  display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+#score-num{font-size:clamp(38px,8vw,52px);font-weight:900;line-height:1;flex-shrink:0;transition:color .4s;}
 .score-info{flex:1;min-width:0;}
-.score-lbl{font-size:clamp(12px,2.5vw,14px);font-weight:700;}
-.score-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+#score-lbl{font-size:clamp(12px,2.5vw,14px);font-weight:700;}
+#score-sub{font-size:12px;color:var(--muted);margin-top:3px;}
 .ring-wrap{width:52px;height:52px;flex-shrink:0;}
 .ring-wrap svg{transform:rotate(-90deg);}
 .ring-bg{fill:none;stroke:rgba(255,255,255,0.07);stroke-width:5;}
-.ring-fill{fill:none;stroke-width:5;stroke-linecap:round;
-  stroke-dasharray:138.2;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1),stroke .4s;}
-
-/* QUOTE BAR (inline, always visible) */
-.quote-bar{margin:0 14px 10px;padding:11px 16px;
-  background:var(--card);border:1px solid var(--b);border-radius:16px;
-  display:flex;align-items:center;gap:9px;cursor:pointer;
-  transition:background .2s;user-select:none;min-height:44px;}
+#ring-fill{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:138.2;
+  stroke-dashoffset:138.2;transition:stroke-dashoffset .7s ease,stroke .4s;}
+/* QUOTE BAR */
+.quote-bar{margin:0 14px 10px;padding:11px 16px;background:var(--card);border:1px solid var(--bdr);
+  border-radius:16px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:background .2s;
+  user-select:none;min-height:44px;}
 .quote-bar:active{background:rgba(167,139,250,0.1);}
-.qb-e{font-size:18px;flex-shrink:0;}
-.qb-t{font-size:13px;font-weight:600;flex:1;line-height:1.3;}
-.qb-tap{font-size:10px;color:var(--muted);flex-shrink:0;}
-
-/* QUOTE POP TOAST (appears on habit check) */
-.q-pop{position:fixed;top:68px;left:50%;
+#qb-emoji{font-size:18px;flex-shrink:0;}
+#qb-text{font-size:13px;font-weight:600;flex:1;line-height:1.3;}
+/* QUOTE POPUP (appears on habit check) */
+#q-pop{position:fixed;top:68px;left:50%;
   transform:translateX(-50%) translateY(-20px);
   background:linear-gradient(135deg,#252838,#1e2030);
-  border:1px solid rgba(167,139,250,0.4);
-  border-radius:22px;padding:13px 22px;
-  max-width:calc(100% - 32px);width:310px;
-  text-align:center;z-index:180;
-  box-shadow:0 8px 32px rgba(0,0,0,0.55);
+  border:1px solid rgba(167,139,250,0.4);border-radius:22px;
+  padding:13px 22px;max-width:calc(100% - 32px);width:310px;
+  text-align:center;z-index:180;box-shadow:0 8px 32px rgba(0,0,0,0.55);
   opacity:0;pointer-events:none;
   transition:opacity .28s ease,transform .32s cubic-bezier(0.34,1.56,0.64,1);}
-.q-pop.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.qp-e{font-size:28px;margin-bottom:5px;}
-.qp-t{font-size:13px;font-weight:800;color:#fff;line-height:1.4;}
-
+#q-pop.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#qp-emoji{font-size:28px;margin-bottom:5px;}
+#qp-text{font-size:13px;font-weight:800;color:#fff;line-height:1.4;}
 /* BUDDY */
 .buddy-card{margin:0 14px 10px;background:linear-gradient(135deg,#1e2030,#252838);
-  border:1px solid var(--b);border-radius:22px;padding:14px 16px;
-  display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(0,0,0,0.25);
-  cursor:pointer;transition:transform .15s;}
+  border:1px solid var(--bdr);border-radius:22px;padding:14px 16px;
+  display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .15s;}
 .buddy-card:active{transform:scale(0.98);}
-.bsvg{width:68px;height:68px;flex-shrink:0;}
+#buddy-svg{width:68px;height:68px;flex-shrink:0;}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.bsvg svg{animation:bob 2.8s ease-in-out infinite;}
-@keyframes wiggle{0%{transform:rotate(0deg)}25%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}75%{transform:rotate(-6deg)}100%{transform:rotate(0deg)}}
-.bsvg.tap svg{animation:wiggle .5s ease;}
+#buddy-svg svg{animation:bob 2.8s ease-in-out infinite;}
 .buddy-info{flex:1;min-width:0;}
-.buddy-name{font-size:15px;font-weight:800;}
-.buddy-msg{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.3;}
+#buddy-name{font-size:15px;font-weight:800;}
+#buddy-msg{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.3;}
 .lvl-row{display:flex;align-items:center;gap:7px;margin-top:9px;}
-.lvl-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;flex-shrink:0;}
+#lvl-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;flex-shrink:0;}
 .xp-bar{flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden;}
-.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:5px;transition:width .6s;}
-.xp-lbl{font-size:10px;color:var(--muted);flex-shrink:0;}
-
+#xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:5px;transition:width .6s;}
+#xp-lbl{font-size:10px;color:var(--muted);flex-shrink:0;}
 /* SECTION HEAD */
 .sec-head{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .sec-head h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);}
-.add-fab{background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:800;
+#open-add{background:var(--accent);border:none;color:#fff;font-size:12px;font-weight:800;
   padding:8px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;
   box-shadow:0 4px 14px rgba(167,139,250,0.45);transition:transform .15s;}
-.add-fab:active{transform:scale(0.93);}
-
+#open-add:active{transform:scale(0.93);}
 /* HABIT LIST */
-.habit-list{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
-@media(min-width:700px){.habit-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;}}
-@media(min-width:1024px){.habit-list{grid-template-columns:1fr 1fr 1fr;}}
-@media(min-width:1440px){.habit-list{grid-template-columns:repeat(4,1fr);}}
-
+#habit-list{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+@media(min-width:700px){#habit-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;}}
+@media(min-width:1024px){#habit-list{grid-template-columns:1fr 1fr 1fr;}}
+@media(min-width:1440px){#habit-list{grid-template-columns:repeat(4,1fr);}}
 /* HABIT CARD */
-.hcard{background:var(--card);border:1.5px solid var(--b);border-radius:18px;
+.hcard{background:var(--card);border:1.5px solid var(--bdr);border-radius:18px;
   padding:14px;display:flex;align-items:center;gap:12px;
   box-shadow:0 2px 12px rgba(0,0,0,0.2);transition:border-color .25s,background .25s,transform .12s;}
-.hcard:active{transform:scale(0.98);}
 .hcard.done{background:var(--gdim);border-color:rgba(76,217,100,0.35);}
 .chk{width:50px;height:50px;border-radius:50%;flex-shrink:0;
   border:2.5px solid rgba(255,255,255,0.15);
@@ -157,47 +131,29 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 .hdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .hbtn{background:none;border:none;color:var(--muted);font-size:16px;padding:8px;cursor:pointer;border-radius:10px;}
 .hbtn:active{background:rgba(255,255,255,0.1);}
-
 /* EMPTY */
 .empty{margin:14px;padding:36px 20px;background:var(--card);
   border:2px dashed rgba(255,255,255,0.1);border-radius:22px;text-align:center;}
-.empty-icon{font-size:52px;margin-bottom:14px;}
-.empty-title{font-size:18px;font-weight:800;margin-bottom:6px;}
-.empty-sub{font-size:13px;color:var(--muted);line-height:1.6;}
-.empty-btn{margin-top:18px;background:var(--accent);color:#fff;border:none;
-  font-size:14px;font-weight:800;padding:13px 28px;border-radius:20px;cursor:pointer;}
-
 /* HINT */
-.hint-bar{margin:6px 14px;padding:11px 14px;background:rgba(255,214,10,0.07);
+#hint-bar{margin:6px 14px;padding:11px 14px;background:rgba(255,214,10,0.07);
   border:1px solid rgba(255,214,10,0.2);border-radius:14px;
-  display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted);}
-.hint-bar b{color:var(--yellow);}
-.hclose{margin-left:auto;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1;}
-
-/* MILESTONE TOAST (top, rare) */
-.ms-toast{position:fixed;top:68px;left:50%;
-  transform:translateX(-50%) translateY(-20px);
-  background:linear-gradient(135deg,#2a1f50,#1e2030);
-  border:1px solid rgba(255,214,10,0.4);border-radius:20px;
-  padding:14px 22px;max-width:calc(100% - 32px);width:300px;
+  display:none;align-items:center;gap:9px;font-size:12px;color:var(--muted);}
+#hint-bar b{color:var(--yellow);}
+#hint-close{margin-left:auto;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;}
+/* MILESTONE TOAST */
+#ms-toast{position:fixed;top:68px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:linear-gradient(135deg,#2a1f50,#1e2030);border:1px solid rgba(255,214,10,0.4);
+  border-radius:20px;padding:14px 22px;max-width:calc(100% - 32px);width:300px;
   text-align:center;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.5);
-  opacity:0;pointer-events:none;
-  transition:opacity .3s,transform .32s cubic-bezier(0.34,1.56,0.64,1);}
-.ms-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.ms-e{font-size:34px;margin-bottom:6px;}
-.ms-t{font-size:14px;font-weight:800;color:var(--yellow);}
-.ms-s{font-size:12px;color:var(--muted);margin-top:3px;}
-
+  opacity:0;pointer-events:none;transition:opacity .3s,transform .32s cubic-bezier(0.34,1.56,0.64,1);}
+#ms-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 /* TABS */
-.tabbar{position:fixed;bottom:0;left:0;right:0;
-  background:rgba(18,20,28,0.98);backdrop-filter:blur(24px);
-  border-top:1px solid rgba(255,255,255,0.07);
+.tabbar{position:fixed;bottom:0;left:0;right:0;background:rgba(18,20,28,0.98);
+  backdrop-filter:blur(24px);border-top:1px solid rgba(255,255,255,0.07);
   display:flex;padding:10px 8px calc(12px + env(safe-area-inset-bottom,0px));
   z-index:100;gap:4px;box-shadow:0 -8px 40px rgba(0,0,0,0.5);}
 @media(min-width:700px){.tabbar{max-width:760px;left:50%;right:auto;transform:translateX(-50%);
   border-radius:24px 24px 0 0;border:1px solid rgba(255,255,255,0.07);border-bottom:none;}}
-@media(min-width:1440px){.tabbar{max-width:1280px;}}
-@media(min-width:1920px){.tabbar{max-width:1600px;}}
 .tabbtn{flex:1;background:none;border:none;color:var(--muted);font-size:10px;font-weight:700;
   letter-spacing:0.3px;display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:8px 4px 6px;border-radius:16px;cursor:pointer;position:relative;transition:color .2s;}
@@ -209,30 +165,27 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   transition:transform .28s cubic-bezier(0.34,1.56,0.64,1),filter .2s;}
 .tab-lbl{position:relative;z-index:1;}
 .tabbtn.active{color:#fff;}
-.tabbtn.active .tab-pill{background:var(--accent);
-  box-shadow:0 4px 20px rgba(167,139,250,0.55);transform:translateX(-50%) translateY(-2px);}
+.tabbtn.active .tab-pill{background:var(--accent);box-shadow:0 4px 20px rgba(167,139,250,0.55);transform:translateX(-50%) translateY(-2px);}
 @keyframes tabB{0%{transform:scale(1)}40%{transform:scale(1.32)}70%{transform:scale(0.9)}100%{transform:scale(1.22) translateY(-1px)}}
 .tabbtn.active .tab-ic{animation:tabB .32s ease forwards;filter:none;}
 .tab-dot{position:absolute;top:7px;right:10px;width:7px;height:7px;border-radius:50%;
   background:var(--green);display:none;box-shadow:0 0 7px var(--green);}
 .tabbtn.hasdot .tab-dot{display:block;}
-
 /* VIEWS */
 .view{display:none;}
 .view.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .view.active{animation:fadeUp .2s ease;}
-
 /* INSIGHTS */
 .ins-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px;margin-bottom:14px;}
 @media(min-width:700px){.ins-tiles{grid-template-columns:repeat(4,1fr);}}
-.ins-tile{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:14px 12px;}
+.ins-tile{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:14px 12px;}
 .ti-num{font-size:clamp(24px,5vw,32px);font-weight:900;color:var(--green);}
 .ti-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:3px;}
-.ins-card{margin:0 14px 14px;background:var(--card);border:1px solid var(--b);border-radius:20px;padding:16px;}
+.ins-card{margin:0 14px 14px;background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:16px;}
 .ic-head{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .ic-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-left:auto;}
-/* BARS - fixed height container */
+/* BAR CHART */
 .chart-lbl{font-size:11px;color:var(--muted);margin-bottom:8px;}
 .week-bars{display:flex;align-items:flex-end;gap:5px;height:80px;border-radius:10px;
   padding:8px 8px 0;background:rgba(255,255,255,0.02);margin-bottom:5px;}
@@ -244,25 +197,23 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 .wbar-lbls span{flex:1;text-align:center;font-size:8px;color:var(--muted);}
 .no-chart{text-align:center;padding:20px 0;color:var(--muted);font-size:12px;
   background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:14px;}
-/* CALENDAR - fixed small cells */
+/* CALENDAR - FIXED SMALL CELLS */
 .cal-lbl{font-size:11px;color:var(--muted);margin-bottom:6px;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;}
 .cday{height:18px;border-radius:3px;background:rgba(255,255,255,0.05);}
-.cday.cdone{background:var(--green);}
-.cday.ctoday{outline:2px solid rgba(255,255,255,0.7);outline-offset:-1px;}
-.cday.cbefore{background:rgba(255,255,255,0.02);}
+.cdone{background:var(--green);}
+.ctoday{outline:2px solid rgba(255,255,255,0.7);outline-offset:-1px;}
+.cbefore{background:rgba(255,255,255,0.02);}
 .cal-leg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
 .cleg{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);}
 .cleg-d{width:10px;height:10px;border-radius:2px;}
-.ins-stats{display:flex;gap:8px;margin-top:4px;}
+.ins-stats{display:flex;gap:8px;}
 .istat{flex:1;background:rgba(255,255,255,0.04);border-radius:12px;padding:10px 6px;text-align:center;}
 .istat .sv{font-size:clamp(15px,3vw,18px);font-weight:800;color:var(--green);}
 .istat .sk{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
-.no-data-msg{text-align:center;padding:48px 20px;color:var(--muted);font-size:14px;line-height:1.8;}
-
 /* PROFILE */
 .pwrap{padding:0 14px;}
-.scard{background:var(--card);border:1px solid var(--b);border-radius:20px;padding:16px;margin-bottom:12px;}
+.scard{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:16px;margin-bottom:12px;}
 .av-area{text-align:center;margin-bottom:18px;}
 .av-circle{width:90px;height:90px;border-radius:50%;background:var(--adim);border:3px solid var(--accent);
   display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;
@@ -273,7 +224,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 .field{margin-bottom:12px;}
 .field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
 .field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,0.05);
-  border:1.5px solid var(--b);color:var(--ink);border-radius:12px;padding:12px 14px;
+  border:1.5px solid var(--bdr);color:var(--ink);border-radius:12px;padding:12px 14px;
   font-size:14px;font-family:inherit;-webkit-appearance:none;appearance:none;transition:border-color .2s;}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);}
 .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239096a2' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
@@ -281,16 +232,15 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 .field select option{background:#23252e;}
 .field textarea{resize:vertical;min-height:60px;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.save-btn{width:100%;background:var(--accent);border:none;color:#fff;border-radius:14px;padding:14px;
-  font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;
+.save-btn{width:100%;background:var(--accent);border:none;color:#fff;border-radius:14px;
+  padding:14px;font-size:15px;font-weight:800;cursor:pointer;margin-top:4px;
   box-shadow:0 4px 18px rgba(167,139,250,0.4);transition:transform .15s;}
 .save-btn:active{transform:scale(0.97);}
-.save-ok{text-align:center;font-size:12px;color:var(--green);height:18px;margin-top:6px;font-weight:700;}
 .sec-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:10px;}
 .buddy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 14px;margin-bottom:12px;}
 @media(min-width:700px){.buddy-grid{grid-template-columns:repeat(6,1fr);}}
 @media(min-width:1024px){.buddy-grid{grid-template-columns:repeat(8,1fr);}}
-.bopt{background:var(--card);border:2px solid var(--b);border-radius:14px;padding:8px 4px 6px;
+.bopt{background:var(--card);border:2px solid var(--bdr);border-radius:14px;padding:8px 4px 6px;
   text-align:center;cursor:pointer;transition:all .18s;}
 .bopt.active{border-color:var(--accent);background:var(--adim);}
 .bopt:active{transform:scale(0.93);}
@@ -299,18 +249,12 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 .bopt.active .bopt-lbl{color:#fff;}
 .bdg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 14px;}
 @media(min-width:700px){.bdg-grid{grid-template-columns:repeat(5,1fr);}}
-.bdg{background:var(--card);border:1.5px solid var(--b);border-radius:14px;padding:12px 8px;text-align:center;}
+.bdg{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;padding:12px 8px;text-align:center;}
 .bdg.on{border-color:var(--yellow);background:rgba(255,214,10,0.07);}
 .bdg.off{opacity:0.28;filter:grayscale(0.9);}
-@keyframes bdgpop{0%{transform:scale(0.4);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
-.bdg.on{animation:bdgpop .45s ease;}
-.bdg .be{font-size:26px;}
-.bdg .bn{font-size:10px;font-weight:800;margin-top:5px;}
-.bdg .bd{font-size:8px;color:var(--muted);margin-top:2px;line-height:1.3;}
-
 /* SETTINGS */
 .swrap{padding:0 14px;}
-.sc{background:var(--card);border:1px solid var(--b);border-radius:20px;padding:16px;margin-bottom:12px;}
+.sc{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:16px;margin-bottom:12px;}
 .sc h3{font-size:15px;font-weight:800;margin-bottom:4px;}
 .sdesc{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;}
 .opt-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
@@ -322,33 +266,29 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 .knob{width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,0.3);}
 .toggle.on .knob{left:25px;}
 .chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
-.chip{padding:8px 16px;border-radius:20px;border:1.5px solid var(--b);background:none;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.chip{padding:8px 16px;border-radius:20px;border:1.5px solid var(--bdr);background:none;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
-.nst{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5;}
 .share-btn{width:100%;background:transparent;border:2px solid var(--accent);color:var(--accent);
   border-radius:14px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;}
 .share-btn:active{background:var(--adim);}
-.copy-line{text-align:center;color:rgba(255,255,255,0.18);font-size:11px;margin:16px 0 6px;line-height:1.8;}
-.copy-line b{color:var(--muted);}
-
 /* MODAL */
 .overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.72);
   backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;}
 .overlay.open{display:flex;}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal{background:#252838;border-radius:26px 26px 0 0;width:100%;max-width:600px;padding:22px 20px 52px;animation:slideUp .3s ease;}
+.modal{background:#252838;border-radius:26px 26px 0 0;width:100%;max-width:600px;padding:22px 20px 50px;animation:slideUp .3s ease;}
 .m-handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);margin:0 auto 20px;}
 .modal h3{font-size:18px;font-weight:800;margin-bottom:16px;}
 .m-sub{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;}
 .emoji-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;}
-.ep{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--b);background:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ep{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--bdr);background:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .ep.on{border-color:var(--accent);background:var(--adim);}
 .color-row{display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap;}
 .cp{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .15s;}
 .cp.on{border-color:#fff;transform:scale(1.22);}
-.minput{width:100%;background:rgba(255,255,255,0.07);border:1.5px solid var(--b);color:var(--ink);
-  border-radius:14px;padding:14px 16px;font-size:15px;margin-bottom:14px;font-family:inherit;transition:border-color .2s;}
+.minput{width:100%;background:rgba(255,255,255,0.07);border:1.5px solid var(--bdr);color:var(--ink);
+  border-radius:14px;padding:14px 16px;font-size:15px;margin-bottom:14px;font-family:inherit;}
 .minput:focus{outline:none;border-color:var(--accent);}
 .mbtns{display:flex;gap:10px;}
 .mcancel{flex:1;background:rgba(255,255,255,0.08);border:none;color:var(--muted);border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;}
@@ -360,47 +300,146 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
 </head>
 <body>
 <canvas id="conf-canvas"></canvas>
-<div id="root"></div>
-<script type="text/babel">
-const {useState,useEffect,useRef}=React;
-
-const QUOTES=[
-  {e:"\uD83D\uDD25",q:"You\u2019re on fire! Keep it going!"},
-  {e:"\uD83D\uDCAA",q:"That\u2019s what champions do!"},
-  {e:"\u26A1",q:"You just levelled up your life!"},
-  {e:"\uD83C\uDF1F",q:"You\u2019re absolutely rocking it!"},
-  {e:"\uD83C\uDFC6",q:"Winner mindset \u2014 activated!"},
-  {e:"\uD83D\uDE80",q:"You\u2019re going places!"},
-  {e:"\u2728",q:"Future you says thank you!"},
-  {e:"\uD83C\uDFAF",q:"Nailed it! Right on target."},
-  {e:"\uD83D\uDE24",q:"No excuses, just results!"},
-  {e:"\uD83E\uDD81",q:"Roar! You\u2019re unstoppable!"},
-  {e:"\uD83D\uDC8E",q:"Diamonds are made under pressure."},
-  {e:"\uD83C\uDF05",q:"Every check-in is a win!"},
-  {e:"\uD83E\uDD4A",q:"You hit that habit hard!"},
-  {e:"\uD83C\uDF0A",q:"Ride that momentum!"},
-  {e:"\uD83C\uDF89",q:"YES! You did the thing!"},
-  {e:"\uD83C\uDFC3",q:"Showing up is 80% of success."},
-  {e:"\uD83D\uDE0E",q:"Too disciplined to skip today!"},
-  {e:"\uD83C\uDF08",q:"Building a better you \u2014 daily!"},
-  {e:"\u2B50",q:"Star player energy today!"},
-  {e:"\uD83E\uDDE0",q:"Your future self is grateful!"},
-  {e:"\uD83E\uDD85",q:"Eagles don\u2019t skip days!"},
-  {e:"\uD83D\uDCA5",q:"BOOM! Another one down!"},
-  {e:"\uD83C\uDF0D",q:"Big things start small."},
-  {e:"\uD83C\uDFC5",q:"Medal-worthy effort right there!"},
-  {e:"\uD83C\uDF3B",q:"Growing stronger every single day!"},
-  {e:"\uD83D\uDCAB",q:"You\u2019re making it look effortless!"},
-  {e:"\uD83D\uDD11",q:"Consistency is the key \u2014 you found it!"},
-  {e:"\uD83E\uDDD7",q:"Climbed that mountain today!"},
-  {e:"\uD83C\uDF19",q:"End today strong, start tomorrow stronger!"},
-  {e:"\uD83C\uDFB8",q:"Absolutely rocking it! Don\u2019t stop."},
+<div id="loader"><div class="ld-logo">Habitly</div><div class="ld-spin"></div><div style="font-size:13px;color:var(--muted)">Loading your progress...</div></div>
+<div class="app">
+  <div id="view-today" class="view active">
+    <div class="hdr">
+      <div class="hdr-l"><div class="hdr-title">Habitly ✦</div><div class="hdr-sub" id="today-date"></div></div>
+      <div class="hdr-av" id="hdr-av">👤</div>
+    </div>
+    <div class="score-card">
+      <div id="score-num" style="color:var(--green)">0</div>
+      <div class="score-info"><div id="score-lbl">of 0 habits done today</div><div id="score-sub">Add a habit to begin!</div></div>
+      <div class="ring-wrap"><svg width="52" height="52" viewBox="0 0 52 52"><circle class="ring-bg" cx="26" cy="26" r="22"/><circle id="ring-fill" cx="26" cy="26" r="22"/></svg></div>
+    </div>
+    <div class="quote-bar" id="quote-bar"><span id="qb-emoji">🔥</span><span id="qb-text">Tap to get motivated!</span><span style="font-size:10px;color:var(--muted)">tap ↺</span></div>
+    <div class="buddy-card" id="buddy-card">
+      <div id="buddy-svg"></div>
+      <div class="buddy-info">
+        <div id="buddy-name">Buddy Panda</div>
+        <div id="buddy-msg">Let's crush today! 💪</div>
+        <div class="lvl-row">
+          <div id="lvl-badge">Lv 1</div>
+          <div class="xp-bar"><div id="xp-fill" style="width:0%"></div></div>
+          <div id="xp-lbl">0/7 XP</div>
+        </div>
+      </div>
+    </div>
+    <div id="hint-bar"><span style="font-size:18px">📱</span><span><b>Tip:</b> Safari → Share → "Add to Home Screen" for app feel!</span><button id="hint-close">✕</button></div>
+    <div class="sec-head"><h2>Today's Habits</h2><button id="open-add">＋ Add Habit</button></div>
+    <div id="habit-list"></div>
+    <div class="pg-foot">© 2026 Ashwin Kumar G · Habitly</div>
+  </div>
+  <div id="view-insights" class="view">
+    <div class="hdr"><div class="hdr-l"><div class="hdr-title">Progress 📈</div><div class="hdr-sub" id="ins-date"></div></div></div>
+    <div class="ins-tiles" id="ins-tiles"></div>
+    <div id="ins-habits"></div>
+  </div>
+  <div id="view-profile" class="view">
+    <div class="hdr"><div class="hdr-l"><div class="hdr-title">My Profile 🎖️</div></div></div>
+    <div style="padding:0 14px 8px"><div class="sec-label">Choose Your Buddy</div></div>
+    <div class="buddy-grid" id="buddy-picker"></div>
+    <div style="padding:14px 14px 8px"><div class="sec-label">Achievements 🏅</div></div>
+    <div class="bdg-grid" id="bdg-grid"></div>
+    <div style="padding:14px 14px 8px"><div class="sec-label">Your Details</div></div>
+    <div class="pwrap"><div class="scard">
+      <div class="av-area">
+        <label for="av-in"><div class="av-circle" id="av-circle">👤</div></label>
+        <div class="av-btns"><label for="av-in">📷 Change Photo</label><button id="rm-av">Remove</button></div>
+        <input type="file" id="av-in" accept="image/*" style="display:none">
+      </div>
+      <div class="field"><label>Full Name</label><input id="p-name" placeholder="Your full name"></div>
+      <div class="field"><label>Habit ID</label><input id="p-hid" placeholder="@yourhandle"></div>
+      <div class="field"><label>Bio</label><textarea id="p-bio" placeholder="A line about yourself"></textarea></div>
+      <div class="two-col">
+        <div class="field"><label>Sex</label><select id="p-sex"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select></div>
+        <div class="field"><label>Year of Birth</label><input id="p-yob" type="number" placeholder="1995"></div>
+      </div>
+      <div class="two-col">
+        <div class="field"><label>Weight (kg)</label><input id="p-wt" type="number" placeholder="70"></div>
+        <div class="field"><label>Height (cm)</label><input id="p-ht" type="number" placeholder="170"></div>
+      </div>
+      <div class="field"><label>Email</label><input id="p-email" type="email" placeholder="you@email.com"></div>
+      <div class="field"><label>Location</label><input id="p-loc" placeholder="City, Country"></div>
+      <button class="save-btn" id="save-profile">Save Profile</button>
+      <div id="profile-toast" style="text-align:center;font-size:12px;color:var(--green);height:18px;margin-top:6px;font-weight:700"></div>
+    </div></div>
+  </div>
+  <div id="view-settings" class="view">
+    <div class="hdr"><div class="hdr-l"><div class="hdr-title">Settings ⚙️</div></div></div>
+    <div class="swrap">
+      <div class="sc">
+        <h3>🔔 Reminders</h3><div class="sdesc">Get nudged to log your habits every day</div>
+        <div class="opt-row"><div><div class="oname">Daily reminders</div><div class="odesc">Works while app is open</div></div><div class="toggle" id="remind-toggle"><div class="knob"></div></div></div>
+        <div class="chip-row" id="chip-row">
+          <button class="chip" data-min="30">30 min</button><button class="chip" data-min="60">1 hour</button>
+          <button class="chip" data-min="120">2 hours</button><button class="chip" data-min="300">5 hours</button>
+        </div>
+        <div id="notif-st" style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5"></div>
+      </div>
+      <div class="sc"><h3>📤 Share Habitly</h3><div class="sdesc">Invite friends and family to build habits together!</div><button class="share-btn" id="share-btn">📤 Share with Friends</button></div>
+      <div class="sc"><h3>📱 Add to Home Screen</h3><div class="sdesc"><b style="color:#fff">iPhone (Safari):</b><br>Tap Share → Add to Home Screen → Add<br><br><b style="color:#fff">Android (Chrome):</b><br>Tap ⋮ → Add to Home Screen<br><br>Opens full screen like a real app!</div></div>
+      <div style="text-align:center;color:rgba(255,255,255,0.18);font-size:11px;margin:16px 0 6px;line-height:1.8">Habitly · © 2026 <b style="color:var(--muted)">Ashwin Kumar G</b><br>All rights reserved · Made with ❤️</div>
+    </div>
+  </div>
+</div>
+<div class="tabbar">
+  <button class="tabbtn active" data-tab="today"><div class="tab-pill"></div><span class="tab-ic">🏠</span><span class="tab-lbl">Today</span><span class="tab-dot"></span></button>
+  <button class="tabbtn" data-tab="insights"><div class="tab-pill"></div><span class="tab-ic">📈</span><span class="tab-lbl">Progress</span><span class="tab-dot"></span></button>
+  <button class="tabbtn" data-tab="profile"><div class="tab-pill"></div><span class="tab-ic">🎖️</span><span class="tab-lbl">Profile</span><span class="tab-dot"></span></button>
+  <button class="tabbtn" data-tab="settings"><div class="tab-pill"></div><span class="tab-ic">⚙️</span><span class="tab-lbl">Settings</span><span class="tab-dot"></span></button>
+</div>
+<div class="overlay" id="habit-overlay">
+  <div class="modal">
+    <div class="m-handle"></div>
+    <h3 id="modal-title">New Habit</h3>
+    <div class="m-sub">Pick an emoji</div>
+    <div class="emoji-row" id="emoji-row"></div>
+    <div class="m-sub">Pick a colour</div>
+    <div class="color-row" id="color-row"></div>
+    <input class="minput" id="habit-input" placeholder="e.g. No Sugar, Drink 2L water..." maxlength="40">
+    <div class="mbtns"><button class="mcancel" id="modal-cancel">Cancel</button><button class="mdel" id="modal-del" style="display:none">Delete</button><button class="msave" id="modal-save">Add Habit</button></div>
+  </div>
+</div>
+<div id="ms-toast"></div>
+<div id="q-pop"><div id="qp-emoji"></div><div id="qp-text"></div></div>
+<script>
+// ── DATA ──
+var QUOTES=[
+  {e:"🔥",q:"You're on fire! Keep it going!"},
+  {e:"💪",q:"That's what champions do!"},
+  {e:"⚡",q:"You just levelled up your life!"},
+  {e:"🌟",q:"You're absolutely rocking it!"},
+  {e:"🏆",q:"Winner mindset — activated!"},
+  {e:"🚀",q:"You're going places!"},
+  {e:"✨",q:"Future you says thank you!"},
+  {e:"🎯",q:"Nailed it! Right on target."},
+  {e:"😤",q:"No excuses, just results!"},
+  {e:"🦁",q:"Roar! You're unstoppable!"},
+  {e:"💎",q:"Diamonds are made under pressure."},
+  {e:"🌅",q:"Every check-in is a win!"},
+  {e:"🥊",q:"You hit that habit hard!"},
+  {e:"🌊",q:"Ride that momentum!"},
+  {e:"🎉",q:"YES! You did the thing!"},
+  {e:"🏃",q:"Showing up is 80% of success."},
+  {e:"😎",q:"Too disciplined to skip today!"},
+  {e:"🌈",q:"Building a better you — daily!"},
+  {e:"⭐",q:"Star player energy today!"},
+  {e:"🧠",q:"Your future self is grateful!"},
+  {e:"🦅",q:"Eagles don't skip days!"},
+  {e:"💥",q:"BOOM! Another one down!"},
+  {e:"🌍",q:"Big things start small."},
+  {e:"🏅",q:"Medal-worthy effort right there!"},
+  {e:"🌻",q:"Growing stronger every single day!"},
+  {e:"💫",q:"You're making it look effortless!"},
+  {e:"🔑",q:"Consistency is the key — you found it!"},
+  {e:"🧗",q:"Climbed that mountain today!"},
+  {e:"🌙",q:"End today strong, start tomorrow stronger!"},
+  {e:"🎸",q:"Absolutely rocking it! Don't stop."}
 ];
-
-const EMOJIS=["\uD83D\uDCAA","\uD83C\uDFC3","\uD83E\uDD57","\uD83D\uDCA7","\uD83D\uDCDA","\uD83E\uDDD8","\uD83D\uDE34","\uD83D\uDEB4","\uD83C\uDFCB\uFE0F","\uD83C\uDFAF","\uD83C\uDF31","\u2764\uFE0F","\u26A1","\uD83D\uDD25","\u2728"];
-const COLORS=["#4cd964","#a78bfa","#ff6b6b","#ffd60a","#60a5fa","#f97316","#ec4899","#06b6d4"];
-
-const BUDDIES=[
+var EMOJIS=["💪","🏃","🥗","💧","📚","🧘","😴","🚴","🏋️","🎯","🌱","❤️","⚡","🔥","✨"];
+var COLORS=["#4cd964","#a78bfa","#ff6b6b","#ffd60a","#60a5fa","#f97316","#ec4899","#06b6d4"];
+var BUDDIES=[
   {id:"panda",label:"Panda",body:"#e8e8e4",earC:"#1a1a1a",ear:"round",patch:true},
   {id:"lion",label:"Lion",body:"#e8a445",earC:"#c97a23",ear:"mane"},
   {id:"tiger",label:"Tiger",body:"#ef9b3d",earC:"#1a1a1a",ear:"round",stripe:true},
@@ -409,507 +448,446 @@ const BUDDIES=[
   {id:"owl",label:"Owl",body:"#8a6a4f",earC:"#6b4f39",ear:"tuft"},
   {id:"hboy",label:"Boy Buddy",body:"#e8b98c",earC:"#3a2a1d",ear:"hairB"},
   {id:"hgirl",label:"Girl Buddy",body:"#e8b98c",earC:"#4a2c1d",ear:"hairG"},
-  {id:"boxer",label:"Boxer",body:"#e8b98c",earC:"#222",ear:"hairB",acc:"\uD83E\uDD4A"},
-  {id:"football",label:"Footballer",body:"#e8b98c",earC:"#222",ear:"hairB",acc:"\u26BD"},
-  {id:"cricket",label:"Cricketer",body:"#e8b98c",earC:"#222",ear:"hairB",acc:"\uD83C\uDFCF"},
+  {id:"boxer",label:"Boxer",body:"#e8b98c",earC:"#222",ear:"hairB",acc:"🥊"},
+  {id:"football",label:"Footballer",body:"#e8b98c",earC:"#222",ear:"hairB",acc:"⚽"},
+  {id:"cricket",label:"Cricketer",body:"#e8b98c",earC:"#222",ear:"hairB",acc:"🏏"}
+];
+var BADGES=[
+  {e:"🌱",n:"First Step",d:"Log your first habit",t:function(tc){return tc>=1;}},
+  {e:"🔥",n:"3-Day Streak",d:"3 days in a row",t:function(_,bs){return bs>=3;}},
+  {e:"⚡",n:"Week Warrior",d:"7-day streak",t:function(_,bs){return bs>=7;}},
+  {e:"🏆",n:"Iron Will",d:"30-day streak",t:function(_,bs){return bs>=30;}},
+  {e:"👑",n:"Centurion",d:"100-day streak",t:function(_,bs){return bs>=100;}},
+  {e:"✅",n:"Perfect Day",d:"All habits in one day",t:function(_,__,pd){return pd>=1;}},
+  {e:"📅",n:"Perfect Week",d:"7 perfect days",t:function(_,__,pd){return pd>=7;}},
+  {e:"💪",n:"Half Century",d:"50 total check-ins",t:function(tc){return tc>=50;}},
+  {e:"🚀",n:"Unstoppable",d:"200 total check-ins",t:function(tc){return tc>=200;}}
 ];
 
-const BADGES=[
-  {e:"\uD83C\uDF31",n:"First Step",d:"Log your first habit",t:function(tc){return tc>=1;}},
-  {e:"\uD83D\uDD25",n:"3-Day Streak",d:"3 days in a row",t:function(_,bs){return bs>=3;}},
-  {e:"\u26A1",n:"Week Warrior",d:"7-day streak",t:function(_,bs){return bs>=7;}},
-  {e:"\uD83C\uDFC6",n:"Iron Will",d:"30-day streak",t:function(_,bs){return bs>=30;}},
-  {e:"\uD83D\uDC51",n:"Centurion",d:"100-day streak",t:function(_,bs){return bs>=100;}},
-  {e:"\u2705",n:"Perfect Day",d:"All habits in one day",t:function(_,__,pd){return pd>=1;}},
-  {e:"\uD83D\uDCC5",n:"Perfect Week",d:"7 perfect days",t:function(_,__,pd){return pd>=7;}},
-  {e:"\uD83D\uDCAA",n:"Half Century",d:"50 total check-ins",t:function(tc){return tc>=50;}},
-  {e:"\uD83D\uDE80",n:"Unstoppable",d:"200 total check-ins",t:function(tc){return tc>=200;}},
-];
-
-const SK={h:"hb:h",l:"hb:l",p:"hb:p",s:"hb:s",hint:"hb:hint"};
+// ── STORAGE ──
+var SK={h:"hb:h",l:"hb:l",p:"hb:p",s:"hb:s",hint:"hb:hint"};
 function lsGet(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 
-const APP_START=new Date(2026,6,1);
+// ── STATE ──
+var habits=[
+  {id:"sugar",name:"No Sugar",emoji:"🥗",color:"#4cd964"},
+  {id:"junk",name:"No Junk Food",emoji:"🚫",color:"#a78bfa"},
+  {id:"steps",name:"10K Steps",emoji:"🏃",color:"#60a5fa"}
+];
+var logs={};
+var profile={name:"",hid:"",bio:"",sex:"",yob:"",wt:"",ht:"",email:"",loc:"",avatar:"",buddy:"panda"};
+var settings={remindOn:false,intervalMin:60};
+var modalMode="add";
+var editId=null;
+var selEmoji="💪";
+var selColor=COLORS[0];
+var qIdx=0;
+var reminderTimer=null;
+var msTimer=null;
+var qTimer=null;
+
+// ── DATE ──
+var APP_START=new Date(2026,6,1);
 function dKey(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function todayKey(){return dKey(new Date());}
 
-function calcStreak(hid,logs){
+// ── STATS ──
+function calcStreak(hid){
   var log=logs[hid]||{};var s=0;var d=new Date();
   while(true){var k=dKey(d);if(log[k]){s++;d.setDate(d.getDate()-1);}else{if(k===todayKey()){d.setDate(d.getDate()-1);continue;}break;}}
   return s;
 }
-function calcLongest(hid,logs){
+function calcLongest(hid){
   var log=logs[hid]||{};var best=0;var run=0;var d=new Date(APP_START);
   while(d<=new Date()){if(log[dKey(d)]){run++;best=Math.max(best,run);}else{run=0;}d.setDate(d.getDate()+1);}
   return best;
 }
-function calcPct(hid,logs){
+function calcPct(hid){
   var log=logs[hid]||{};
   var days=Math.max(1,Math.floor((new Date()-APP_START)/864e5)+1);
   return Math.round(Object.values(log).filter(Boolean).length/days*100);
 }
-function calcWeekly(hid,logs,w){
+function calcWeekly(hid,w){
   var log=logs[hid]||{};var now=new Date();
   return Array.from({length:w},function(_,i){
     var done=0;var total=0;
     for(var d=0;d<7;d++){var dt=new Date(now);dt.setDate(dt.getDate()-(i*7+d));
       if(dt<APP_START||dt>now)continue;total++;if(log[dKey(dt)])done++;}
-    return total?{pct:Math.round(done/total*100),hasData:true}:{pct:0,hasData:false};
+    return total?{pct:Math.round(done/total*100),has:true}:{pct:0,has:false};
   }).reverse();
 }
-function totalComp(habits,logs){return habits.reduce(function(a,h){return a+Object.values(logs[h.id]||{}).filter(Boolean).length;},0);}
-function perfectDays(habits,logs){
+function totalComp(){return habits.reduce(function(a,h){return a+Object.values(logs[h.id]||{}).filter(Boolean).length;},0);}
+function perfectDays(){
   if(!habits.length)return 0;
   var c=0;var d=new Date(APP_START);
   while(d<=new Date()){var k=dKey(d);if(habits.every(function(h){return !!(logs[h.id]||{})[k];}))c++;d.setDate(d.getDate()+1);}
   return c;
 }
 
+// ── BUDDY SVG ──
 function buildSVG(moodPct,b){
-  var ink="#16210c";var eyes="";var mouth="";var sparkles="";
+  var ink="#16210c";var eyes,mouth,sparkles="";
   if(moodPct>=100){
-    eyes="<circle cx=\"42\" cy=\"56\" r=\"5\" fill=\""+ink+"\"/><circle cx=\"68\" cy=\"56\" r=\"5\" fill=\""+ink+"\"/>";
-    mouth="<path d=\"M44 68 Q55 82 66 68\" stroke=\""+ink+"\" stroke-width=\"3.5\" fill=\"none\" stroke-linecap=\"round\"/>";
-    sparkles="<text x=\"10\" y=\"26\" font-size=\"13\">\u2728</text><text x=\"78\" y=\"22\" font-size=\"11\">\u2B50</text>";
+    eyes='<circle cx="42" cy="56" r="5" fill="'+ink+'"/><circle cx="68" cy="56" r="5" fill="'+ink+'"/>';
+    mouth='<path d="M44 68 Q55 82 66 68" stroke="'+ink+'" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
+    sparkles='<text x="10" y="26" font-size="13">✨</text><text x="78" y="22" font-size="11">⭐</text>';
   } else if(moodPct>0){
-    eyes="<circle cx=\"42\" cy=\"56\" r=\"5\" fill=\""+ink+"\"/><circle cx=\"68\" cy=\"56\" r=\"5\" fill=\""+ink+"\"/>";
-    mouth="<path d=\"M46 68 Q55 74 64 68\" stroke=\""+ink+"\" stroke-width=\"3.5\" fill=\"none\" stroke-linecap=\"round\"/>";
+    eyes='<circle cx="42" cy="56" r="5" fill="'+ink+'"/><circle cx="68" cy="56" r="5" fill="'+ink+'"/>';
+    mouth='<path d="M46 68 Q55 74 64 68" stroke="'+ink+'" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
   } else {
-    eyes="<path d=\"M37 56 q5 5 10 0\" stroke=\""+ink+"\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M63 56 q5 5 10 0\" stroke=\""+ink+"\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>";
-    mouth="<path d=\"M47 72 Q55 67 63 72\" stroke=\""+ink+"\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>";
+    eyes='<path d="M37 56 q5 5 10 0" stroke="'+ink+'" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M63 56 q5 5 10 0" stroke="'+ink+'" stroke-width="3" fill="none" stroke-linecap="round"/>';
+    mouth='<path d="M47 72 Q55 67 63 72" stroke="'+ink+'" stroke-width="3" fill="none" stroke-linecap="round"/>';
   }
   var ears="";
-  if(b.ear==="round")ears="<ellipse cx=\"30\" cy=\"22\" rx=\"12\" ry=\"12\" fill=\""+b.earC+"\"/><ellipse cx=\"80\" cy=\"22\" rx=\"12\" ry=\"12\" fill=\""+b.earC+"\"/>";
-  else if(b.ear==="mane")ears="<circle cx=\"55\" cy=\"54\" r=\"42\" fill=\""+b.earC+"\" opacity=\"0.85\"/>";
-  else if(b.ear==="pointy")ears="<path d=\"M25 10 L40 30 L18 28Z\" fill=\""+b.earC+"\"/><path d=\"M85 10 L70 30 L92 28Z\" fill=\""+b.earC+"\"/>";
-  else if(b.ear==="tuft")ears="<path d=\"M36 16 q4-10 8 0\" stroke=\""+b.earC+"\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M66 16 q4-10 8 0\" stroke=\""+b.earC+"\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/>";
-  else if(b.ear==="hairB")ears="<path d=\"M20 30 Q30 4 55 6 Q80 4 90 30 Q80 18 55 18 Q30 18 20 30Z\" fill=\""+b.earC+"\"/>";
-  else if(b.ear==="hairG")ears="<path d=\"M20 30 Q30 2 55 4 Q80 2 90 30 Q80 14 55 14 Q30 14 20 30Z\" fill=\""+b.earC+"\"/><ellipse cx=\"16\" cy=\"46\" rx=\"8\" ry=\"16\" fill=\""+b.earC+"\"/><ellipse cx=\"94\" cy=\"46\" rx=\"8\" ry=\"16\" fill=\""+b.earC+"\"/>";
-  var patch=b.patch?"<ellipse cx=\"42\" cy=\"54\" rx=\"10\" ry=\"12\" fill=\"#1a1a1a\"/><ellipse cx=\"68\" cy=\"54\" rx=\"10\" ry=\"12\" fill=\"#1a1a1a\"/>":"";
-  var stripe=b.stripe?"<path d=\"M26 48 Q55 40 84 48\" stroke=\"#1a1a1a\" stroke-width=\"3\" fill=\"none\" opacity=\"0.4\"/><path d=\"M22 80 Q55 90 88 80\" stroke=\"#1a1a1a\" stroke-width=\"3\" fill=\"none\" opacity=\"0.4\"/>":"";
-  var acc=b.acc?"<text x=\"55\" y=\"108\" font-size=\"20\" text-anchor=\"middle\">"+b.acc+"</text>":"";
+  if(b.ear==="round")ears='<ellipse cx="30" cy="22" rx="12" ry="12" fill="'+b.earC+'"/><ellipse cx="80" cy="22" rx="12" ry="12" fill="'+b.earC+'"/>';
+  else if(b.ear==="mane")ears='<circle cx="55" cy="54" r="42" fill="'+b.earC+'" opacity="0.85"/>';
+  else if(b.ear==="pointy")ears='<path d="M25 10 L40 30 L18 28Z" fill="'+b.earC+'"/><path d="M85 10 L70 30 L92 28Z" fill="'+b.earC+'"/>';
+  else if(b.ear==="tuft")ears='<path d="M36 16 q4-10 8 0" stroke="'+b.earC+'" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 16 q4-10 8 0" stroke="'+b.earC+'" stroke-width="5" fill="none" stroke-linecap="round"/>';
+  else if(b.ear==="hairB")ears='<path d="M20 30 Q30 4 55 6 Q80 4 90 30 Q80 18 55 18 Q30 18 20 30Z" fill="'+b.earC+'"/>';
+  else if(b.ear==="hairG")ears='<path d="M20 30 Q30 2 55 4 Q80 2 90 30 Q80 14 55 14 Q30 14 20 30Z" fill="'+b.earC+'"/><ellipse cx="16" cy="46" rx="8" ry="16" fill="'+b.earC+'"/><ellipse cx="94" cy="46" rx="8" ry="16" fill="'+b.earC+'"/>';
+  var patch=b.patch?'<ellipse cx="42" cy="54" rx="10" ry="12" fill="#1a1a1a"/><ellipse cx="68" cy="54" rx="10" ry="12" fill="#1a1a1a"/>':"";
+  var stripe=b.stripe?'<path d="M26 48 Q55 40 84 48" stroke="#1a1a1a" stroke-width="3" fill="none" opacity="0.4"/><path d="M22 80 Q55 90 88 80" stroke="#1a1a1a" stroke-width="3" fill="none" opacity="0.4"/>':"";
+  var acc=b.acc?'<text x="55" y="108" font-size="20" text-anchor="middle">'+b.acc+'</text>':"";
   var behind=b.ear==="mane"||b.ear==="round";
-  return "<svg viewBox=\"0 0 110 110\" xmlns=\"http://www.w3.org/2000/svg\">"+sparkles+(behind?ears:"")+"<ellipse cx=\"55\" cy=\"66\" rx=\"36\" ry=\"32\" fill=\""+b.body+"\"/>"+patch+stripe+"<ellipse cx=\"55\" cy=\"58\" rx=\"26\" ry=\"22\" fill=\"#fff\" opacity=\"0.08\"/>"+(!behind?ears:"")+eyes+mouth+acc+"<ellipse cx=\"55\" cy=\"96\" rx=\"28\" ry=\"7\" fill=\"#000\" opacity=\"0.10\"/></svg>";
+  return '<svg viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">'+sparkles+(behind?ears:"")+'<ellipse cx="55" cy="66" rx="36" ry="32" fill="'+b.body+'"/>'+patch+stripe+'<ellipse cx="55" cy="58" rx="26" ry="22" fill="#fff" opacity="0.08"/>'+(!behind?ears:"")+eyes+mouth+acc+'<ellipse cx="55" cy="96" rx="28" ry="7" fill="#000" opacity="0.10"/></svg>';
 }
 
+// ── SOUND & HAPTIC ──
 function playTick(){try{var c=new(window.AudioContext||window.webkitAudioContext)();var o=c.createOscillator();var g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;o.type="sine";g.gain.setValueAtTime(0.2,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15);o.start();o.stop(c.currentTime+0.15);}catch(e){}}
 function playWin(){try{var c=new(window.AudioContext||window.webkitAudioContext)();[523,659,784,1047].forEach(function(f,i){var o=c.createOscillator();var g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;var t=c.currentTime+i*0.1;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.18,t+0.05);g.gain.exponentialRampToValueAtTime(0.001,t+0.2);o.start(t);o.stop(t+0.25);});}catch(e){}}
 function haptic(){try{if(navigator.vibrate)navigator.vibrate(40);}catch(e){}}
 
+// ── CONFETTI ──
 function fireConfetti(){
-  var canvas=document.getElementById("conf-canvas");var ctx=canvas.getContext("2d");
-  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  var cv=document.getElementById("conf-canvas");var ctx=cv.getContext("2d");
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
   var colors=["#4cd964","#a78bfa","#ffd60a","#ff6b6b","#60a5fa","#f97316","#ec4899"];
-  var pieces=Array.from({length:120},function(){return{x:Math.random()*canvas.width,y:-Math.random()*200,r:Math.random()*7+3,c:colors[Math.floor(Math.random()*colors.length)],vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,rot:Math.random()*360,rs:(Math.random()-0.5)*8,s:Math.random()>0.5?"r":"c"};});
+  var pieces=Array.from({length:120},function(){return{x:Math.random()*cv.width,y:-Math.random()*200,r:Math.random()*7+3,c:colors[Math.floor(Math.random()*colors.length)],vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,rot:Math.random()*360,rs:(Math.random()-0.5)*8,s:Math.random()>0.5?"r":"c"};});
   var frame=0;
-  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(function(p){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.c;if(p.s==="r")ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);else{ctx.beginPath();ctx.arc(0,0,p.r/2,0,Math.PI*2);ctx.fill();}ctx.restore();p.x+=p.vx;p.y+=p.vy;p.rot+=p.rs;p.vy+=0.12;});frame++;if(frame<90)requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);}
-  draw();
+  (function draw(){ctx.clearRect(0,0,cv.width,cv.height);pieces.forEach(function(p){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.c;if(p.s==="r")ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.7);else{ctx.beginPath();ctx.arc(0,0,p.r/2,0,Math.PI*2);ctx.fill();}ctx.restore();p.x+=p.vx;p.y+=p.vy;p.rot+=p.rs;p.vy+=0.12;});frame++;if(frame<90)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);})();
 }
 
-function HabitCard(props){
-  var habit=props.habit;var isDone=props.isDone;var streakVal=props.streakVal;var onToggle=props.onToggle;var onEdit=props.onEdit;
-  var popping=useState(false);var setPopping=popping[1];popping=popping[0];
-  function handleTap(){haptic();setPopping(true);setTimeout(function(){setPopping(false);},420);onToggle();}
-  var dotColor=habit.color||"var(--green)";
-  var doneStyle=isDone?{background:habit.color||"var(--green)",borderColor:habit.color||"var(--green)",boxShadow:"0 0 20px "+(habit.color||"#4cd964")+"88"}:{};
-  return React.createElement("div",{className:"hcard"+(isDone?" done":"")},
-    React.createElement("div",{className:"chk"+(popping?" pop":""),style:doneStyle,onClick:handleTap},isDone?"\u2713":""),
-    React.createElement("div",{className:"hmid"},
-      React.createElement("div",{className:"hname"},
-        React.createElement("span",null,habit.emoji||"\uD83D\uDCAA"),
-        React.createElement("span",{className:"hname-t"},habit.name)
-      ),
-      React.createElement("div",{className:"hstreak"},"\uD83D\uDD25 ",React.createElement("b",null,streakVal)," day streak")
-    ),
-    React.createElement("div",{className:"hdot",style:{background:dotColor,boxShadow:"0 0 6px "+dotColor+"88"}}),
-    React.createElement("button",{className:"hbtn",onClick:function(e){e.stopPropagation();onEdit();}},"\u270E")
-  );
+// ── SHOW QUOTE POPUP ──
+function showQuotePopup(){
+  var q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById("qp-emoji").textContent=q.e;
+  document.getElementById("qp-text").textContent=q.q;
+  var pop=document.getElementById("q-pop");
+  pop.classList.add("show");
+  clearTimeout(qTimer);
+  qTimer=setTimeout(function(){pop.classList.remove("show");},2800);
 }
 
-function HabitModal(props){
-  var open=props.open;var mode=props.mode;var habit=props.habit;var onSave=props.onSave;var onDelete=props.onDelete;var onClose=props.onClose;
-  var ns=useState("");var setName=ns[1];ns=ns[0];
-  var em=useState("\uD83D\uDCAA");var setEmoji=em[1];em=em[0];
-  var cl=useState(COLORS[0]);var setColor=cl[1];cl=cl[0];
-  useEffect(function(){if(open){setName(habit?habit.name:"");setEmoji(habit?(habit.emoji||"\uD83D\uDCAA"):"\uD83D\uDCAA");setColor(habit?(habit.color||COLORS[0]):COLORS[0]);};},[open,habit]);
-  if(!open)return null;
-  function doSave(){if(ns.trim())onSave({name:ns.trim(),emoji:em,color:cl});}
-  return React.createElement("div",{className:"overlay open",onClick:function(e){if(e.target.className==="overlay open")onClose();}},
-    React.createElement("div",{className:"modal"},
-      React.createElement("div",{className:"m-handle"}),
-      React.createElement("h3",null,mode==="add"?"New Habit":"Edit Habit"),
-      React.createElement("div",{className:"m-sub"},"Pick an emoji"),
-      React.createElement("div",{className:"emoji-row"},EMOJIS.map(function(emoji){return React.createElement("button",{key:emoji,className:"ep"+(em===emoji?" on":""),onClick:function(){setEmoji(emoji);}},emoji);})),
-      React.createElement("div",{className:"m-sub"},"Pick a colour"),
-      React.createElement("div",{className:"color-row"},COLORS.map(function(c){return React.createElement("div",{key:c,className:"cp"+(cl===c?" on":""),style:{background:c},onClick:function(){setColor(c);}});})),
-      React.createElement("input",{className:"minput",value:ns,onChange:function(e){setName(e.target.value);},placeholder:"e.g. No Sugar, Drink 2L water...",maxLength:40,onKeyPress:function(e){if(e.key==="Enter")doSave();},autoFocus:true}),
-      React.createElement("div",{className:"mbtns"},
-        React.createElement("button",{className:"mcancel",onClick:onClose},"Cancel"),
-        mode==="edit"&&React.createElement("button",{className:"mdel",onClick:onDelete},"Delete"),
-        React.createElement("button",{className:"msave",onClick:doSave},mode==="add"?"Add Habit":"Save")
-      )
-    )
-  );
+// ── SHOW MILESTONE ──
+function showMilestone(data){
+  var el=document.getElementById("ms-toast");
+  el.innerHTML='<div style="font-size:34px;margin-bottom:6px">'+data.e+'</div><div style="font-size:14px;font-weight:800;color:var(--yellow)">'+data.t+'</div><div style="font-size:12px;color:var(--muted);margin-top:3px">'+data.s+'</div>';
+  el.classList.add("show");
+  clearTimeout(msTimer);
+  msTimer=setTimeout(function(){el.classList.remove("show");},3500);
 }
 
-function StreakCal(props){
-  var hid=props.hid;var logs=props.logs;
-  var log=logs[hid]||{};var now=new Date();var days=[];
-  for(var i=27;i>=0;i--){var d=new Date(now);d.setDate(d.getDate()-i);days.push(d);}
-  return React.createElement("div",null,
-    React.createElement("div",{className:"cal-lbl"},"Last 28 days"),
-    React.createElement("div",{className:"cal-grid"},days.map(function(d,i){
-      var k=dKey(d);var isToday=k===todayKey();var isBefore=d<APP_START;var isDone=!isBefore&&log[k];
-      var cls="cday"+(isBefore?" cbefore":isDone?" cdone":"")+(isToday?" ctoday":"");
-      return React.createElement("div",{key:i,className:cls,title:d.toLocaleDateString()});
-    })),
-    React.createElement("div",{className:"cal-leg"},
-      React.createElement("div",{className:"cleg"},React.createElement("div",{className:"cleg-d",style:{background:"var(--green)"}}),React.createElement("span",null,"Done")),
-      React.createElement("div",{className:"cleg"},React.createElement("div",{className:"cleg-d",style:{background:"rgba(255,255,255,0.05)"}}),React.createElement("span",null,"Missed")),
-      React.createElement("div",{className:"cleg"},React.createElement("div",{className:"cleg-d",style:{background:"rgba(255,255,255,0.05)",outline:"2px solid rgba(255,255,255,0.7)",outlineOffset:"-1px"}}),React.createElement("span",null,"Today"))
-    )
-  );
-}
-
-function TodayView(props){
-  var habits=props.habits;var logs=props.logs;var profile=props.profile;
-  var onToggle=props.onToggle;var onAdd=props.onAdd;var onEdit=props.onEdit;
-  var showHint=props.showHint;var onDismissHint=props.onDismissHint;var goProfile=props.goProfile;
-  var qi=useState(0);var setQi=qi[1];qi=qi[0];
-  var bt=useState(false);var setBt=bt[1];bt=bt[0];
+// ── RENDER TODAY ──
+function renderToday(){
   var tk=todayKey();
   var done=habits.filter(function(h){return !!(logs[h.id]||{})[tk];}).length;
-  var total=habits.length;var pct=total?Math.round(done/total*100):0;
+  var total=habits.length;
+  var pct=total?Math.round(done/total*100):0;
   var circ=2*Math.PI*22;
-  var b=BUDDIES.find(function(x){return x.id===profile.buddy;})||BUDDIES[0];
-  var isHuman=b.id==="hboy"||b.id==="hgirl";
-  var bName=isHuman?"Buddy "+(b.id==="hboy"?"Boy":"Girl"):"Buddy "+b.label;
-  var bmsgs=["I'm sleepy... log something! \uD83D\uDE34","Nice start! Keep going! \uD83D\uDE0A",done+"/"+total+" done \u2014 so close! \uD83C\uDF1F","PERFECT DAY! You crushed it! \uD83C\uDFC6\uD83C\uDF89"];
-  var bMsg=total?(pct>=100?bmsgs[3]:pct>50?bmsgs[2]:pct>0?bmsgs[1]:bmsgs[0]):"Add habits to wake me up! \uD83D\uDC47";
   var sc=pct>=100?"var(--yellow)":"var(--green)";
-  var tc=totalComp(habits,logs);var xpPL=7;var lvl=Math.floor(tc/xpPL)+1;var xpIn=tc%xpPL;
-  var q=QUOTES[qi%QUOTES.length];
-  function nextQ(){setQi(function(i){return (i+1)%QUOTES.length;});}
-  function tapBuddy(){haptic();setBt(true);setTimeout(function(){setBt(false);},550);nextQ();}
-  var scoreInfo=!total?"Add a habit below to begin!":pct>=100?"Perfect day! You're a legend! \uD83C\uDF89":pct>50?"Almost there! Keep going! \u26A1":pct>0?"Great start! Keep going! \uD83D\uDD25":"Tap a habit circle to log it! \uD83D\uDCAA";
-  return React.createElement("div",null,
-    React.createElement("div",{className:"hdr"},
-      React.createElement("div",{className:"hdr-l"},
-        React.createElement("div",{className:"hdr-title"},"Habitly \u2726"),
-        React.createElement("div",{className:"hdr-sub"},new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"}))
-      ),
-      React.createElement("div",{className:"hdr-av",onClick:goProfile},
-        profile.avatar?React.createElement("img",{src:profile.avatar}):(profile.name?profile.name[0].toUpperCase():"\uD83D\uDC64")
-      )
-    ),
-    React.createElement("div",{className:"score-card"},
-      React.createElement("div",{className:"score-num",style:{color:sc}},done),
-      React.createElement("div",{className:"score-info"},
-        React.createElement("div",{className:"score-lbl"},"of "+total+" habit"+(total!==1?"s":"")+" done today"),
-        React.createElement("div",{className:"score-sub"},scoreInfo)
-      ),
-      React.createElement("div",{className:"ring-wrap"},
-        React.createElement("svg",{width:"52",height:"52",viewBox:"0 0 52 52"},
-          React.createElement("circle",{className:"ring-bg",cx:"26",cy:"26",r:"22"}),
-          React.createElement("circle",{className:"ring-fill",cx:"26",cy:"26",r:"22",style:{strokeDashoffset:circ-(circ*pct/100),stroke:sc}})
-        )
-      )
-    ),
-    React.createElement("div",{className:"quote-bar",onClick:nextQ},
-      React.createElement("span",{className:"qb-e"},q.e),
-      React.createElement("span",{className:"qb-t"},q.q),
-      React.createElement("span",{className:"qb-tap"},"tap \u21BA")
-    ),
-    React.createElement("div",{className:"buddy-card",onClick:tapBuddy},
-      React.createElement("div",{className:"bsvg"+(bt?" tap":""),dangerouslySetInnerHTML:{__html:buildSVG(pct,b)}}),
-      React.createElement("div",{className:"buddy-info"},
-        React.createElement("div",{className:"buddy-name"},bName),
-        React.createElement("div",{className:"buddy-msg"},bMsg),
-        React.createElement("div",{className:"lvl-row"},
-          React.createElement("div",{className:"lvl-badge"},"Lv "+lvl),
-          React.createElement("div",{className:"xp-bar"},React.createElement("div",{className:"xp-fill",style:{width:Math.round(xpIn/xpPL*100)+"%"}})),
-          React.createElement("div",{className:"xp-lbl"},xpIn+"/"+xpPL+" XP")
-        )
-      )
-    ),
-    showHint&&React.createElement("div",{className:"hint-bar"},
-      React.createElement("span",{style:{fontSize:"18px"}},"\uD83D\uDCF1"),
-      React.createElement("span",null,React.createElement("b",null,"Tip:")," Safari \u2192 Share \u2192 \u201CAdd to Home Screen\u201D for app feel!"),
-      React.createElement("button",{className:"hclose",onClick:onDismissHint},"\u2715")
-    ),
-    React.createElement("div",{className:"sec-head"},
-      React.createElement("h2",null,"Today's Habits"),
-      React.createElement("button",{className:"add-fab",onClick:onAdd},"\uFF0B Add Habit")
-    ),
-    !habits.length?React.createElement("div",{className:"empty"},
-      React.createElement("div",{className:"empty-icon"},"\uD83C\uDF31"),
-      React.createElement("div",{className:"empty-title"},"No habits yet!"),
-      React.createElement("div",{className:"empty-sub"},"Add your first habit and start building your streak today. You've got this!"),
-      React.createElement("button",{className:"empty-btn",onClick:onAdd},"\uFF0B Add your first habit")
-    ):React.createElement("div",{className:"habit-list"},
-      habits.map(function(h){
-        return React.createElement(HabitCard,{key:h.id,habit:h,isDone:!!(logs[h.id]||{})[tk],streakVal:calcStreak(h.id,logs),onToggle:function(){onToggle(h.id);},onEdit:function(){onEdit(h);}});
-      })
-    ),
-    React.createElement("div",{className:"pg-foot"},"\u00A9 2026 Ashwin Kumar G \u00B7 Habitly")
-  );
+  document.getElementById("score-num").textContent=done;
+  document.getElementById("score-num").style.color=sc;
+  document.getElementById("score-lbl").textContent="of "+total+" habit"+(total!==1?"s":"")+" done today";
+  document.getElementById("score-sub").textContent=!total?"Add a habit below to begin!":pct>=100?"Perfect day! You're a legend! 🎉":pct>50?"Almost there! Keep going! ⚡":pct>0?"Great start! Keep going! 🔥":"Tap a habit circle to log it! 💪";
+  var rf=document.getElementById("ring-fill");
+  rf.style.strokeDashoffset=circ-(circ*pct/100);
+  rf.style.stroke=sc;
+  // date
+  document.getElementById("today-date").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  // buddy
+  var b=BUDDIES.find(function(x){return x.id===profile.buddy;})||BUDDIES[0];
+  document.getElementById("buddy-svg").innerHTML=buildSVG(pct,b);
+  var isHuman=b.id==="hboy"||b.id==="hgirl";
+  document.getElementById("buddy-name").textContent=isHuman?"Buddy "+(b.id==="hboy"?"Boy":"Girl"):"Buddy "+b.label;
+  var bmsgs=["I'm sleepy... log something! 😴","Nice start! Keep going! 😊",done+"/"+total+" done — so close! 🌟","PERFECT DAY! You crushed it! 🏆🎉"];
+  document.getElementById("buddy-msg").textContent=total?(pct>=100?bmsgs[3]:pct>50?bmsgs[2]:pct>0?bmsgs[1]:bmsgs[0]):"Add habits to wake me up! 👇";
+  // xp
+  var tc=totalComp();var xpPL=7;var lvl=Math.floor(tc/xpPL)+1;var xpIn=tc%xpPL;
+  document.getElementById("lvl-badge").textContent="Lv "+lvl;
+  document.getElementById("xp-fill").style.width=Math.round(xpIn/xpPL*100)+"%";
+  document.getElementById("xp-lbl").textContent=xpIn+"/"+xpPL+" XP";
+  // avatar
+  var av=document.getElementById("hdr-av");
+  if(profile.avatar)av.innerHTML='<img src="'+profile.avatar+'">';
+  else av.textContent=profile.name?profile.name[0].toUpperCase():"👤";
+  // habit list
+  var list=document.getElementById("habit-list");
+  list.innerHTML="";
+  if(!habits.length){
+    list.innerHTML='<div class="empty"><div style="font-size:52px;margin-bottom:14px">🌱</div><div style="font-size:18px;font-weight:800;margin-bottom:6px">No habits yet!</div><div style="font-size:13px;color:var(--muted);line-height:1.6">Add your first habit and start building your streak today.</div><button onclick="openAdd()" style="margin-top:18px;background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:800;padding:13px 28px;border-radius:20px;cursor:pointer">＋ Add your first habit</button></div>';
+    return;
+  }
+  habits.forEach(function(h){
+    var isDone=!!(logs[h.id]||{})[tk];
+    var s=calcStreak(h.id);
+    var dotColor=h.color||"var(--green)";
+    var div=document.createElement("div");
+    div.className="hcard"+(isDone?" done":"");
+    div.innerHTML='<div class="chk" style="'+(isDone?"background:"+dotColor+";border-color:"+dotColor+";box-shadow:0 0 20px "+dotColor+"88":"")+'" data-id="'+h.id+'">'+(isDone?"✓":"")+'</div><div class="hmid"><div class="hname"><span>'+h.emoji+'</span><span class="hname-t">'+h.name+'</span></div><div class="hstreak">🔥 <b>'+s+'</b> day streak</div></div><div class="hdot" style="background:'+dotColor+';box-shadow:0 0 6px '+dotColor+'88"></div><button class="hbtn" data-edit="'+h.id+'">✎</button>';
+    // check
+    div.querySelector(".chk").addEventListener("click",function(e){toggleHabit(e.currentTarget.dataset.id);});
+    div.querySelector(".hbtn").addEventListener("click",function(e){e.stopPropagation();openEdit(e.currentTarget.dataset.edit);});
+    list.appendChild(div);
+  });
+  // tab dot
+  var doneCnt=habits.filter(function(h){return !!(logs[h.id]||{})[tk];}).length;
+  var todayBtn=document.querySelector('[data-tab="today"]');
+  if(doneCnt>0&&doneCnt<habits.length)todayBtn.classList.add("hasdot"); else todayBtn.classList.remove("hasdot");
 }
 
-function InsightsView(props){
-  var habits=props.habits;var logs=props.logs;
-  var tc=totalComp(habits,logs);var pd=perfectDays(habits,logs);
-  var daysSoFar=Math.max(1,Math.floor((new Date()-APP_START)/864e5)+1);
-  var bestS=habits.length?Math.max.apply(null,habits.map(function(h){return calcLongest(h.id,logs);})):0;
-  var overall=habits.length?Math.round(tc/(daysSoFar*habits.length)*100):0;
-  return React.createElement("div",null,
-    React.createElement("div",{className:"hdr"},React.createElement("div",{className:"hdr-l"},React.createElement("div",{className:"hdr-title"},"Progress \uD83D\uDCC8"),React.createElement("div",{className:"hdr-sub"},new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"})))),
-    React.createElement("div",{className:"ins-tiles"},[{n:tc,l:"Total Check-ins"},{n:pd,l:"Perfect Days"},{n:bestS,l:"Best Streak"},{n:overall+"%",l:"Consistency"}].map(function(t,i){return React.createElement("div",{key:i,className:"ins-tile"},React.createElement("div",{className:"ti-num"},t.n),React.createElement("div",{className:"ti-lbl"},t.l));})),
-    !habits.length?React.createElement("div",{className:"no-data-msg"},"\uD83D\uDCCA Add habits and start logging\nto see your progress here!\n\nYour charts appear after your first check-in \uD83D\uDCAA"):
-    habits.map(function(h){
-      var rates=calcWeekly(h.id,logs,8);
-      var hasData=rates.some(function(r){return r.hasData;});
-      var maxPct=Math.max.apply(null,rates.map(function(r){return r.pct;}).concat([1]));
-      var cs=calcStreak(h.id,logs);var ls=calcLongest(h.id,logs);var pa=calcPct(h.id,logs);
-      var dotColor=h.color||"var(--green)";
-      return React.createElement("div",{key:h.id,className:"ins-card"},
-        React.createElement("div",{className:"ic-head"},
-          React.createElement("span",null,h.emoji||"\uD83D\uDCCC"),
-          React.createElement("span",null,h.name),
-          React.createElement("div",{className:"ic-dot",style:{background:dotColor,boxShadow:"0 0 6px "+dotColor+"88"}})
-        ),
-        React.createElement("div",{className:"chart-lbl"},"Weekly completion (last 8 weeks)"),
-        !hasData?React.createElement("div",{className:"no-chart"},"\uD83D\uDD50 Check in today to start seeing your weekly chart!"):
-        React.createElement("div",null,
-          React.createElement("div",{className:"week-bars"},rates.map(function(r,i){
-            var h2=r.hasData?Math.max(Math.round((r.pct/maxPct)*64),6):4;
-            var cls="wbar "+(r.hasData?(r.pct>=100?"wfull":"wpart"):"wempty");
-            return React.createElement("div",{key:i,className:cls,style:{height:h2+"px"},title:r.hasData?r.pct+"%":"No data"});
-          })),
-          React.createElement("div",{className:"wbar-lbls"},rates.map(function(_,i){return React.createElement("span",{key:i},i===rates.length-1?"Now":"");}))
-        ),
-        React.createElement(StreakCal,{hid:h.id,logs:logs}),
-        React.createElement("div",{className:"ins-stats"},
-          React.createElement("div",{className:"istat"},React.createElement("div",{className:"sv"},"\uD83D\uDD25 "+cs),React.createElement("div",{className:"sk"},"Current")),
-          React.createElement("div",{className:"istat"},React.createElement("div",{className:"sv"},"\uD83C\uDFC6 "+ls),React.createElement("div",{className:"sk"},"Best Ever")),
-          React.createElement("div",{className:"istat"},React.createElement("div",{className:"sv"},pa+"%"),React.createElement("div",{className:"sk"},"All-Time"))
-        )
-      );
-    })
-  );
-}
-
-function ProfileView(props){
-  var profile=props.profile;var onSave=props.onSave;var habits=props.habits;var logs=props.logs;
-  var fm=useState({...profile});var setFm=fm[1];fm=fm[0];
-  var sv=useState(false);var setSv=sv[1];sv=sv[0];
-  useEffect(function(){setFm({...profile});},[profile]);
-  var tc=totalComp(habits,logs);var pd=perfectDays(habits,logs);
-  var bestS=habits.length?Math.max.apply(null,habits.map(function(h){return calcLongest(h.id,logs);})):0;
-  function F(id,label,type,ph){
-    return React.createElement("div",{className:"field"},
-      React.createElement("label",null,label),
-      React.createElement("input",{type:type||"text",placeholder:ph||"",value:fm[id]||"",onChange:function(e){setFm(function(f){var n={...f};n[id]=e.target.value;return n;});}})
-    );
-  }
-  function handleAv(e){
-    var file=e.target.files[0];if(!file)return;
-    var reader=new FileReader();
-    reader.onload=function(ev){var img=new Image();img.onload=function(){
-      var c=document.createElement("canvas");c.width=c.height=160;var ctx=c.getContext("2d");
-      var min=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-min)/2,(img.height-min)/2,min,min,0,0,160,160);
-      var np={...fm,avatar:c.toDataURL("image/jpeg",0.82)};setFm(np);onSave(np);
-    };img.src=ev.target.result;};reader.readAsDataURL(file);
-  }
-  function doSave(){onSave(fm);setSv(true);setTimeout(function(){setSv(false);},2200);}
-  return React.createElement("div",null,
-    React.createElement("div",{className:"hdr"},React.createElement("div",{className:"hdr-l"},React.createElement("div",{className:"hdr-title"},"My Profile \uD83C\uDFC6"))),
-    React.createElement("div",{style:{padding:"0 14px 8px"}},React.createElement("div",{className:"sec-label"},"Choose Your Buddy")),
-    React.createElement("div",{className:"buddy-grid"},
-      BUDDIES.map(function(b){return React.createElement("div",{key:b.id,className:"bopt"+(fm.buddy===b.id?" active":""),onClick:function(){var np={...fm,buddy:b.id};setFm(np);onSave(np);}},
-        React.createElement("div",{className:"bopt-ic",dangerouslySetInnerHTML:{__html:buildSVG(100,b)}}),
-        React.createElement("div",{className:"bopt-lbl"},b.label)
-      );})
-    ),
-    React.createElement("div",{style:{padding:"14px 14px 8px"}},React.createElement("div",{className:"sec-label"},"Achievements \uD83C\uDFC5")),
-    React.createElement("div",{className:"bdg-grid"},
-      BADGES.map(function(bg,i){var u=bg.t(tc,bestS,pd);return React.createElement("div",{key:i,className:"bdg"+(u?" on":" off")},React.createElement("div",{className:"be"},bg.e),React.createElement("div",{className:"bn"},bg.n),React.createElement("div",{className:"bd"},bg.d));})
-    ),
-    React.createElement("div",{style:{padding:"14px 14px 8px"}},React.createElement("div",{className:"sec-label"},"Your Details")),
-    React.createElement("div",{className:"pwrap"},
-      React.createElement("div",{className:"scard"},
-        React.createElement("div",{className:"av-area"},
-          React.createElement("label",{htmlFor:"av-in"},React.createElement("div",{className:"av-circle"},fm.avatar?React.createElement("img",{src:fm.avatar}):(fm.name?fm.name[0].toUpperCase():"\uD83D\uDC64"))),
-          React.createElement("div",{className:"av-btns"},React.createElement("label",{htmlFor:"av-in"},"\uD83D\uDCF7 Change Photo"),React.createElement("button",{onClick:function(){var np={...fm,avatar:""};setFm(np);onSave(np);}},"Remove")),
-          React.createElement("input",{type:"file",id:"av-in",accept:"image/*",style:{display:"none"},onChange:handleAv})
-        ),
-        F("name","Full Name","text","Your full name"),
-        F("hid","Habit ID","text","@yourhandle"),
-        React.createElement("div",{className:"field"},React.createElement("label",null,"Bio"),React.createElement("textarea",{placeholder:"A line about yourself",value:fm.bio||"",onChange:function(e){setFm(function(f){var n={...f};n.bio=e.target.value;return n;});}})),
-        React.createElement("div",{className:"two-col"},
-          React.createElement("div",{className:"field"},React.createElement("label",null,"Sex"),React.createElement("select",{value:fm.sex||"",onChange:function(e){setFm(function(f){var n={...f};n.sex=e.target.value;return n;});}},React.createElement("option",{value:""},"Select"),React.createElement("option",null,"Male"),React.createElement("option",null,"Female"),React.createElement("option",null,"Other"),React.createElement("option",null,"Prefer not to say"))),
-          F("yob","Year of Birth","number","1995")
-        ),
-        React.createElement("div",{className:"two-col"},F("wt","Weight (kg)","number","70"),F("ht","Height (cm)","number","170")),
-        F("email","Email","email","you@email.com"),
-        F("loc","Location","text","City, Country"),
-        React.createElement("button",{className:"save-btn",onClick:doSave},"Save Profile"),
-        React.createElement("div",{className:"save-ok"},sv?"\u2713 Profile saved!":"")
-      )
-    )
-  );
-}
-
-function SettingsView(props){
-  var settings=props.settings;var onSave=props.onSave;
-  var ss=useState({...settings});var setSs=ss[1];ss=ss[0];
-  var rt=useRef(null);
-  function save(ns){setSs(ns);onSave(ns);}
-  function applyTimer(ns){if(rt.current)clearInterval(rt.current);if(!ns.remindOn||!("Notification"in window)||Notification.permission!=="granted")return;rt.current=setInterval(function(){new Notification("Habitly \u2726",{body:"Time to log your habits! \uD83D\uDCAA"});},ns.intervalMin*60000);}
-  function toggle(){
-    if(!ss.remindOn&&"Notification"in window&&Notification.permission==="default"){
-      Notification.requestPermission().then(function(){var ns={...ss,remindOn:!ss.remindOn};save(ns);applyTimer(ns);});
-    } else {var ns={...ss,remindOn:!ss.remindOn};save(ns);applyTimer(ns);}
-  }
-  function setInt(m){var ns={...ss,intervalMin:m};save(ns);applyTimer(ns);}
-  var nst=!("Notification"in window)?"Not supported in this browser.":Notification.permission==="denied"?"\u26A0\uFE0F Blocked \u2014 enable in phone settings.":ss.remindOn?"\u2713 Reminders on. Works while app is open.":"";
-  function doShare(){var d={title:"Habitly",text:"Building daily habits with Habitly! \uD83D\uDCAA",url:location.href};if(navigator.share){navigator.share(d).catch(function(){});}else{navigator.clipboard.writeText(d.url).then(function(){alert("\u2713 Link copied!");}).catch(function(){alert("Copy: "+d.url);});}}
-  return React.createElement("div",null,
-    React.createElement("div",{className:"hdr"},React.createElement("div",{className:"hdr-l"},React.createElement("div",{className:"hdr-title"},"Settings \u2699\uFE0F"))),
-    React.createElement("div",{className:"swrap"},
-      React.createElement("div",{className:"sc"},
-        React.createElement("h3",null,"\uD83D\uDD14 Reminders"),
-        React.createElement("div",{className:"sdesc"},"Get nudged to log your habits every day"),
-        React.createElement("div",{className:"opt-row"},
-          React.createElement("div",null,React.createElement("div",{className:"oname"},"Daily reminders"),React.createElement("div",{className:"odesc"},"Works while app is open in browser")),
-          React.createElement("div",{className:"toggle"+(ss.remindOn?" on":""),onClick:toggle},React.createElement("div",{className:"knob"}))
-        ),
-        React.createElement("div",{className:"chip-row"},[{m:30,l:"30 min"},{m:60,l:"1 hour"},{m:120,l:"2 hours"},{m:300,l:"5 hours"}].map(function(x){return React.createElement("button",{key:x.m,className:"chip"+(ss.intervalMin===x.m?" on":""),onClick:function(){setInt(x.m);}},x.l);})),
-        nst&&React.createElement("div",{className:"nst"},nst)
-      ),
-      React.createElement("div",{className:"sc"},
-        React.createElement("h3",null,"\uD83D\uDCE4 Share Habitly"),
-        React.createElement("div",{className:"sdesc"},"Invite friends and family to build habits together!"),
-        React.createElement("button",{className:"share-btn",onClick:doShare},"\uD83D\uDCE4 Share with Friends")
-      ),
-      React.createElement("div",{className:"sc"},
-        React.createElement("h3",null,"\uD83D\uDCF1 Add to Home Screen"),
-        React.createElement("div",{className:"sdesc"},
-          React.createElement("b",{style:{color:"#fff"}},"iPhone (Safari only):"),React.createElement("br"),"Tap Share \u2192 Add to Home Screen \u2192 Add",React.createElement("br"),React.createElement("br"),
-          React.createElement("b",{style:{color:"#fff"}},"Android (Chrome):"),React.createElement("br"),"Tap \u22EE \u2192 Add to Home Screen",React.createElement("br"),React.createElement("br"),
-          "Opens full screen like a real app!"
-        )
-      ),
-      React.createElement("div",{className:"copy-line"},React.createElement("b",null,"Ashwin Kumar G")," \u00B7 Habitly \u00A9 2026",React.createElement("br"),"All rights reserved \u00B7 Made with \u2764\uFE0F")
-    )
-  );
-}
-
-function App(){
-  var ld=useState(false);var setLd=ld[1];ld=ld[0];
-  var tb=useState("today");var setTb=tb[1];tb=tb[0];
-  var hb=useState([{id:"sugar",name:"No Sugar",emoji:"\uD83E\uDD57",color:"#4cd964"},{id:"junk",name:"No Junk Food",emoji:"\uD83D\uDEAB",color:"#a78bfa"},{id:"steps",name:"10K Steps",emoji:"\uD83C\uDFC3",color:"#60a5fa"}]);
-  var setHb=hb[1];hb=hb[0];
-  var lg=useState({});var setLg=lg[1];lg=lg[0];
-  var pf=useState({name:"",hid:"",bio:"",sex:"",yob:"",wt:"",ht:"",email:"",loc:"",avatar:"",buddy:"panda"});var setPf=pf[1];pf=pf[0];
-  var st=useState({remindOn:false,intervalMin:60});var setSt=st[1];st=st[0];
-  var mo=useState(false);var setMo=mo[1];mo=mo[0];
-  var mm=useState("add");var setMm=mm[1];mm=mm[0];
-  var eh=useState(null);var setEh=eh[1];eh=eh[0];
-  var ms=useState(null);var setMs=ms[1];ms=ms[0];
-  var sms=useState(false);var setSms=sms[1];sms=sms[0];
-  var qd=useState(null);var setQd=qd[1];qd=qd[0];
-  var sqd=useState(false);var setSqd=sqd[1];sqd=sqd[0];
-  var sh=useState(false);var setSh=sh[1];sh=sh[0];
-  var msR=useRef(null);var qtR=useRef(null);
-
-  useEffect(function(){
-    var h=lsGet(SK.h);if(h&&h.length)setHb(h);
-    var l=lsGet(SK.l);if(l)setLg(l);
-    var p=lsGet(SK.p);if(p)setPf(function(x){return {...x,...p};});
-    var s=lsGet(SK.s);if(s)setSt(function(x){return {...x,...s};});
-    setTimeout(function(){setLd(true);},600);
-    if(!lsGet(SK.hint)&&!window.navigator.standalone)setTimeout(function(){setSh(true);},4000);
-  },[]);
-
-  function persist(h,l){lsSet(SK.h,h);lsSet(SK.l,l);}
-
-  function trigMs(data){setMs(data);setSms(true);if(msR.current)clearTimeout(msR.current);msR.current=setTimeout(function(){setSms(false);},3500);}
-  function trigQ(){
-    var q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
-    setQd(q);setSqd(true);
-    if(qtR.current)clearTimeout(qtR.current);
-    qtR.current=setTimeout(function(){setSqd(false);},2800);
-  }
-
-  function handleToggle(hid){
-    var tk=todayKey();
-    var curLog=lg[hid]||{};
-    var wasDone=!!curLog[tk];
-    if(wasDone){var s=calcStreak(hid,lg);if(s>=3&&!window.confirm("Un-tick this?
-Your "+s+"-day streak is safe until midnight."))return;}
-    var newHabLog={...curLog};
-    if(wasDone)delete newHabLog[tk];else newHabLog[tk]=true;
-    var newLogs={...lg,[hid]:newHabLog};
-    var nowDone=hb.filter(function(h){return !!(newLogs[h.id]||{})[tk];}).length;
-    setLg(newLogs);persist(hb,newLogs);
-    if(!wasDone){
-      playTick();haptic();
-      trigQ();
-      var streak=calcStreak(hid,newLogs);
-      var milestones=[{v:3,e:"\uD83D\uDD25",t:"3-Day Streak!",s:"You're building momentum!"},{v:7,e:"\u26A1",t:"Week Warrior!",s:"7 days in a row!"},{v:30,e:"\uD83C\uDFC6",t:"30 Days!",s:"Iron Will unlocked!"},{v:100,e:"\uD83D\uDC51",t:"CENTURION!",s:"100 days \u2014 you're a legend!"}];
-      var m=milestones.find(function(x){return x.v===streak;});
-      if(m)setTimeout(function(){trigMs(m);},600);
-      if(nowDone===hb.length)setTimeout(function(){fireConfetti();playWin();},350);
-    }
-  }
-
-  function openAdd(){setMm("add");setEh(null);setMo(true);}
-  function openEdit(h){setMm("edit");setEh(h);setMo(true);}
-  function handleSave(data){
-    var newH=mm==="add"?[...hb,{id:"h"+Date.now(),name:data.name,emoji:data.emoji,color:data.color}]:hb.map(function(h){return h.id===eh.id?{...h,name:data.name,emoji:data.emoji,color:data.color}:h;});
-    setHb(newH);persist(newH,lg);setMo(false);
-  }
-  function handleDelete(){
-    if(!window.confirm("Delete \u201C"+eh.name+"\u201D and all its history?"))return;
-    var newH=hb.filter(function(h){return h.id!==eh.id;});var newL={...lg};delete newL[eh.id];
-    setHb(newH);setLg(newL);persist(newH,newL);setMo(false);
-  }
-  function savePf(p){setPf(p);lsSet(SK.p,p);}
-  function saveSt(s){setSt(s);lsSet(SK.s,s);}
-
+// ── TOGGLE HABIT ──
+function toggleHabit(hid){
   var tk=todayKey();
-  var doneCnt=hb.filter(function(h){return !!(lg[h.id]||{})[tk];}).length;
-  var TABS=[{id:"today",ic:"\uD83C\uDFE0",lbl:"Today"},{id:"insights",ic:"\uD83D\uDCC8",lbl:"Progress"},{id:"profile",ic:"\uD83C\uDFC6",lbl:"Profile"},{id:"settings",ic:"\u2699\uFE0F",lbl:"Settings"}];
-  function goTab(t){setTb(t);window.scrollTo({top:0,behavior:"smooth"});}
-
-  return React.createElement("div",null,
-    React.createElement("div",{className:"loader"+(ld?" hide":"")},
-      React.createElement("div",{className:"ld-logo"},"Habitly"),
-      React.createElement("div",{className:"ld-spin"}),
-      React.createElement("div",{className:"ld-sub"},"Loading your progress...")
-    ),
-    React.createElement("div",{className:"app"},
-      React.createElement("div",{className:"view"+(tb==="today"?" active":"")},React.createElement(TodayView,{habits:hb,logs:lg,profile:pf,onToggle:handleToggle,onAdd:openAdd,onEdit:openEdit,showHint:sh,onDismissHint:function(){setSh(false);lsSet(SK.hint,true);},goProfile:function(){goTab("profile");}})),
-      React.createElement("div",{className:"view"+(tb==="insights"?" active":"")},tb==="insights"&&React.createElement(InsightsView,{habits:hb,logs:lg})),
-      React.createElement("div",{className:"view"+(tb==="profile"?" active":"")},tb==="profile"&&React.createElement(ProfileView,{profile:pf,onSave:savePf,habits:hb,logs:lg})),
-      React.createElement("div",{className:"view"+(tb==="settings"?" active":"")},tb==="settings"&&React.createElement(SettingsView,{settings:st,onSave:saveSt}))
-    ),
-    React.createElement("div",{className:"tabbar"},
-      TABS.map(function(t){return React.createElement("button",{key:t.id,className:"tabbtn"+(tb===t.id?" active":"")+(t.id==="today"&&doneCnt>0&&doneCnt<hb.length?" hasdot":""),onClick:function(){goTab(t.id);}},
-        React.createElement("div",{className:"tab-pill"}),
-        React.createElement("span",{className:"tab-ic"},t.ic),
-        React.createElement("span",{className:"tab-lbl"},t.lbl),
-        t.id==="today"&&React.createElement("span",{className:"tab-dot"})
-      );})
-    ),
-    React.createElement(HabitModal,{open:mo,mode:mm,habit:eh,onSave:handleSave,onDelete:handleDelete,onClose:function(){setMo(false);}}),
-    ms&&React.createElement("div",{className:"ms-toast"+(sms?" show":"")},React.createElement("div",{className:"ms-e"},ms.e),React.createElement("div",{className:"ms-t"},ms.t),React.createElement("div",{className:"ms-s"},ms.s)),
-    qd&&React.createElement("div",{className:"q-pop"+(sqd?" show":"")},React.createElement("div",{className:"qp-e"},qd.e),React.createElement("div",{className:"qp-t"},qd.q))
-  );
+  var cur=logs[hid]||{};
+  var wasDone=!!cur[tk];
+  if(wasDone){
+    var s=calcStreak(hid);
+    if(s>=3&&!confirm("Un-tick this?\nYour "+s+"-day streak is safe until midnight."))return;
+  }
+  var newLog=Object.assign({},cur);
+  if(wasDone)delete newLog[tk];else newLog[tk]=true;
+  logs[hid]=newLog;
+  lsSet(SK.h,habits);lsSet(SK.l,logs);
+  var nowDone=habits.filter(function(h){return !!(logs[h.id]||{})[tk];}).length;
+  if(!wasDone){
+    playTick();haptic();
+    showQuotePopup();
+    var streak=calcStreak(hid);
+    var milestones=[{v:3,e:"🔥",t:"3-Day Streak!",s:"You're building momentum!"},{v:7,e:"⚡",t:"Week Warrior!",s:"7 days in a row!"},{v:30,e:"🏆",t:"30 Days!",s:"Iron Will unlocked!"},{v:100,e:"👑",t:"CENTURION!",s:"100 days — legend!"}];
+    var m=milestones.find(function(x){return x.v===streak;});
+    if(m)setTimeout(function(){showMilestone(m);},600);
+    if(nowDone===habits.length)setTimeout(function(){fireConfetti();playWin();},350);
+  }
+  renderToday();
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App,null));
+// ── MODAL ──
+function openAdd(){
+  modalMode="add";editId=null;selEmoji="💪";selColor=COLORS[0];
+  document.getElementById("modal-title").textContent="New Habit";
+  document.getElementById("habit-input").value="";
+  document.getElementById("modal-save").textContent="Add Habit";
+  document.getElementById("modal-del").style.display="none";
+  renderModalPickers();
+  document.getElementById("habit-overlay").classList.add("open");
+  setTimeout(function(){document.getElementById("habit-input").focus();},100);
+}
+function openEdit(id){
+  var h=habits.find(function(x){return x.id===id;});if(!h)return;
+  modalMode="edit";editId=id;selEmoji=h.emoji||"💪";selColor=h.color||COLORS[0];
+  document.getElementById("modal-title").textContent="Edit Habit";
+  document.getElementById("habit-input").value=h.name;
+  document.getElementById("modal-save").textContent="Save";
+  document.getElementById("modal-del").style.display="block";
+  renderModalPickers();
+  document.getElementById("habit-overlay").classList.add("open");
+  setTimeout(function(){document.getElementById("habit-input").focus();},100);
+}
+function closeModal(){document.getElementById("habit-overlay").classList.remove("open");}
+function renderModalPickers(){
+  var er=document.getElementById("emoji-row");er.innerHTML="";
+  EMOJIS.forEach(function(em){var b=document.createElement("button");b.className="ep"+(em===selEmoji?" on":"");b.textContent=em;b.onclick=function(){selEmoji=em;renderModalPickers();};er.appendChild(b);});
+  var cr=document.getElementById("color-row");cr.innerHTML="";
+  COLORS.forEach(function(c){var d=document.createElement("div");d.className="cp"+(c===selColor?" on":"");d.style.background=c;d.onclick=function(){selColor=c;renderModalPickers();};cr.appendChild(d);});
+}
+
+// ── INSIGHTS ──
+function renderInsights(){
+  document.getElementById("ins-date").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"});
+  var tc=totalComp();var pd=perfectDays();
+  var daysSoFar=Math.max(1,Math.floor((new Date()-APP_START)/864e5)+1);
+  var bestS=habits.length?Math.max.apply(null,habits.map(function(h){return calcLongest(h.id);})):0;
+  var overall=habits.length?Math.round(tc/(daysSoFar*habits.length)*100):0;
+  document.getElementById("ins-tiles").innerHTML=[{n:tc,l:"Total Check-ins"},{n:pd,l:"Perfect Days"},{n:bestS,l:"Best Streak"},{n:overall+"%",l:"Consistency"}].map(function(t){return '<div class="ins-tile"><div class="ti-num">'+t.n+'</div><div class="ti-lbl">'+t.l+'</div></div>';}).join("");
+  var el=document.getElementById("ins-habits");el.innerHTML="";
+  if(!habits.length){el.innerHTML='<div style="text-align:center;padding:48px 20px;color:var(--muted);font-size:14px;line-height:1.8">📊 Add habits and start logging<br>to see your progress here!<br><br>Charts appear after your first check-in 💪</div>';return;}
+  habits.forEach(function(h){
+    var rates=calcWeekly(h.id,8);
+    var hasData=rates.some(function(r){return r.has;});
+    var maxPct=Math.max.apply(null,rates.map(function(r){return r.pct;}).concat([1]));
+    var cs=calcStreak(h.id);var ls=calcLongest(h.id);var pa=calcPct(h.id);
+    var dotColor=h.color||"var(--green)";
+    var barsHtml="";
+    if(!hasData){barsHtml='<div class="no-chart">🕐 Check in today to start seeing your weekly chart!</div>';}
+    else{
+      barsHtml='<div class="chart-lbl">Weekly completion (last 8 weeks)</div><div class="week-bars">';
+      rates.forEach(function(r){var bh=r.has?Math.max(Math.round((r.pct/maxPct)*64),6):4;var cls="wbar "+(r.has?(r.pct>=100?"wfull":"wpart"):"wempty");barsHtml+='<div class="'+cls+'" style="height:'+bh+'px" title="'+(r.has?r.pct+"%":"No data")+'"></div>';});
+      barsHtml+='</div><div class="wbar-lbls">'+rates.map(function(_,i){return '<span>'+(i===rates.length-1?"Now":"")+'</span>';}).join("")+'</div>';
+    }
+    // calendar
+    var now=new Date();var days=[];
+    for(var i=27;i>=0;i--){var dt=new Date(now);dt.setDate(dt.getDate()-i);days.push(dt);}
+    var calHtml='<div class="cal-lbl">Last 28 days</div><div class="cal-grid">';
+    days.forEach(function(d){
+      var k=dKey(d);var isToday=k===todayKey();var isBefore=d<APP_START;var isDone=!isBefore&&(logs[h.id]||{})[k];
+      var cls="cday"+(isBefore?" cbefore":isDone?" cdone":"")+(isToday?" ctoday":"");
+      calHtml+='<div class="'+cls+'" title="'+d.toLocaleDateString()+'"></div>';
+    });
+    calHtml+='</div><div class="cal-leg"><div class="cleg"><div class="cleg-d" style="background:var(--green)"></div><span>Done</span></div><div class="cleg"><div class="cleg-d" style="background:rgba(255,255,255,0.05)"></div><span>Missed</span></div><div class="cleg"><div class="cleg-d" style="background:rgba(255,255,255,0.05);outline:2px solid rgba(255,255,255,0.7);outline-offset:-1px"></div><span>Today</span></div></div>';
+    el.innerHTML+='<div class="ins-card"><div class="ic-head"><span>'+h.emoji+'</span><span>'+h.name+'</span><div class="ic-dot" style="background:'+dotColor+';box-shadow:0 0 6px '+dotColor+'88"></div></div>'+barsHtml+calHtml+'<div class="ins-stats"><div class="istat"><div class="sv">🔥 '+cs+'</div><div class="sk">Current</div></div><div class="istat"><div class="sv">🏆 '+ls+'</div><div class="sk">Best Ever</div></div><div class="istat"><div class="sv">'+pa+'%</div><div class="sk">All-Time</div></div></div></div>';
+  });
+}
+
+// ── PROFILE ──
+function renderProfile(){
+  var b=BUDDIES.find(function(x){return x.id===profile.buddy;})||BUDDIES[0];
+  var av=document.getElementById("av-circle");
+  av.innerHTML=profile.avatar?'<img src="'+profile.avatar+'">':(profile.name?profile.name[0].toUpperCase():"👤");
+  document.getElementById("p-name").value=profile.name||"";
+  document.getElementById("p-hid").value=profile.hid||"";
+  document.getElementById("p-bio").value=profile.bio||"";
+  document.getElementById("p-sex").value=profile.sex||"";
+  document.getElementById("p-yob").value=profile.yob||"";
+  document.getElementById("p-wt").value=profile.wt||"";
+  document.getElementById("p-ht").value=profile.ht||"";
+  document.getElementById("p-email").value=profile.email||"";
+  document.getElementById("p-loc").value=profile.loc||"";
+  // buddy picker
+  var picker=document.getElementById("buddy-picker");picker.innerHTML="";
+  BUDDIES.forEach(function(bd){
+    var d=document.createElement("div");d.className="bopt"+(profile.buddy===bd.id?" active":"");
+    d.innerHTML='<div class="bopt-ic">'+buildSVG(100,bd)+'</div><div class="bopt-lbl">'+bd.label+'</div>';
+    d.onclick=function(){profile.buddy=bd.id;lsSet(SK.p,profile);renderProfile();renderToday();};
+    picker.appendChild(d);
+  });
+  // badges
+  var tc=totalComp();var pd=perfectDays();
+  var bestS=habits.length?Math.max.apply(null,habits.map(function(h){return calcLongest(h.id);})):0;
+  var bg=document.getElementById("bdg-grid");bg.innerHTML="";
+  BADGES.forEach(function(bdg){
+    var u=bdg.t(tc,bestS,pd);
+    bg.innerHTML+='<div class="bdg '+(u?"on":"off")+'"><div style="font-size:26px">'+bdg.e+'</div><div style="font-size:10px;font-weight:800;margin-top:5px">'+bdg.n+'</div><div style="font-size:8px;color:var(--muted);margin-top:2px;line-height:1.3">'+bdg.d+'</div></div>';
+  });
+}
+
+// ── SETTINGS ──
+function renderSettings(){
+  var t=document.getElementById("remind-toggle");
+  t.classList.toggle("on",settings.remindOn);
+  document.querySelectorAll("#chip-row .chip").forEach(function(c){c.classList.toggle("on",Number(c.dataset.min)===settings.intervalMin);});
+  var ns=document.getElementById("notif-st");
+  if(!("Notification"in window))ns.textContent="Not supported in this browser.";
+  else if(Notification.permission==="denied")ns.textContent="⚠️ Blocked — enable in phone settings.";
+  else if(settings.remindOn)ns.textContent="✓ Reminders on. Works while app is open.";
+  else ns.textContent="";
+}
+function applyTimer(){
+  clearInterval(reminderTimer);
+  if(!settings.remindOn||!("Notification"in window)||Notification.permission!=="granted")return;
+  reminderTimer=setInterval(function(){new Notification("Habitly ✦",{body:"Time to log your habits! 💪"});},settings.intervalMin*60000);
+}
+
+// ── TAB SWITCHING ──
+function goTab(name){
+  document.querySelectorAll(".tabbtn").forEach(function(b){b.classList.toggle("active",b.dataset.tab===name);});
+  ["today","insights","profile","settings"].forEach(function(v){
+    var el=document.getElementById("view-"+v);
+    el.classList.remove("active");
+    if(v===name)setTimeout(function(){el.classList.add("active");},10);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(name==="insights")renderInsights();
+  if(name==="profile")renderProfile();
+  if(name==="settings")renderSettings();
+}
+
+// ── INIT ──
+function init(){
+  var h=lsGet(SK.h);if(h&&h.length)habits=h;
+  var l=lsGet(SK.l);if(l)logs=l;
+  var p=lsGet(SK.p);if(p)profile=Object.assign(profile,p);
+  var s=lsGet(SK.s);if(s)settings=Object.assign(settings,s);
+  // show install hint once
+  if(!lsGet(SK.hint)&&!window.navigator.standalone)setTimeout(function(){document.getElementById("hint-bar").style.display="flex";},4000);
+  // quote bar
+  var q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById("qb-emoji").textContent=q.e;
+  document.getElementById("qb-text").textContent=q.q;
+  renderToday();
+  setTimeout(function(){document.getElementById("loader").classList.add("hide");},600);
+  applyTimer();
+}
+
+// ── EVENTS ──
+document.querySelectorAll(".tabbtn").forEach(function(b){b.addEventListener("click",function(){goTab(b.dataset.tab);});});
+document.getElementById("open-add").addEventListener("click",openAdd);
+document.getElementById("modal-cancel").addEventListener("click",closeModal);
+document.getElementById("habit-overlay").addEventListener("click",function(e){if(e.target===this)closeModal();});
+document.getElementById("habit-input").addEventListener("keypress",function(e){if(e.key==="Enter")document.getElementById("modal-save").click();});
+document.getElementById("modal-save").addEventListener("click",function(){
+  var n=document.getElementById("habit-input").value.trim();if(!n)return;
+  if(modalMode==="add"){habits.push({id:"h"+Date.now(),name:n,emoji:selEmoji,color:selColor});}
+  else{var h=habits.find(function(x){return x.id===editId;});if(h){h.name=n;h.emoji=selEmoji;h.color=selColor;}}
+  lsSet(SK.h,habits);lsSet(SK.l,logs);closeModal();renderToday();
+});
+document.getElementById("modal-del").addEventListener("click",function(){
+  if(!confirm("Delete this habit and all its history?"))return;
+  habits=habits.filter(function(h){return h.id!==editId;});delete logs[editId];
+  lsSet(SK.h,habits);lsSet(SK.l,logs);closeModal();renderToday();
+});
+document.getElementById("save-profile").addEventListener("click",function(){
+  profile.name=document.getElementById("p-name").value.trim();
+  profile.hid=document.getElementById("p-hid").value.trim();
+  profile.bio=document.getElementById("p-bio").value.trim();
+  profile.sex=document.getElementById("p-sex").value;
+  profile.yob=document.getElementById("p-yob").value;
+  profile.wt=document.getElementById("p-wt").value;
+  profile.ht=document.getElementById("p-ht").value;
+  profile.email=document.getElementById("p-email").value.trim();
+  profile.loc=document.getElementById("p-loc").value.trim();
+  lsSet(SK.p,profile);renderToday();
+  var t=document.getElementById("profile-toast");t.textContent="✓ Saved!";setTimeout(function(){t.textContent="";},2200);
+});
+document.getElementById("av-in").addEventListener("change",function(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){var img=new Image();img.onload=function(){
+    var c=document.createElement("canvas");c.width=c.height=160;var ctx=c.getContext("2d");
+    var min=Math.min(img.width,img.height);ctx.drawImage(img,(img.width-min)/2,(img.height-min)/2,min,min,0,0,160,160);
+    profile.avatar=c.toDataURL("image/jpeg",0.82);lsSet(SK.p,profile);renderProfile();renderToday();
+  };img.src=ev.target.result;};reader.readAsDataURL(file);
+});
+document.getElementById("rm-av").addEventListener("click",function(){profile.avatar="";lsSet(SK.p,profile);renderProfile();renderToday();});
+document.getElementById("hint-close").addEventListener("click",function(){document.getElementById("hint-bar").style.display="none";lsSet(SK.hint,true);});
+document.getElementById("hdr-av").addEventListener("click",function(){goTab("profile");});
+document.getElementById("buddy-card").addEventListener("click",function(){
+  qIdx=(qIdx+1)%QUOTES.length;
+  var q=QUOTES[qIdx];
+  document.getElementById("qb-emoji").textContent=q.e;
+  document.getElementById("qb-text").textContent=q.q;
+});
+document.getElementById("quote-bar").addEventListener("click",function(){
+  qIdx=(qIdx+1)%QUOTES.length;
+  var q=QUOTES[qIdx];
+  document.getElementById("qb-emoji").textContent=q.e;
+  document.getElementById("qb-text").textContent=q.q;
+});
+document.getElementById("remind-toggle").addEventListener("click",function(){
+  if(!settings.remindOn&&"Notification"in window&&Notification.permission==="default"){
+    Notification.requestPermission().then(function(){settings.remindOn=!settings.remindOn;lsSet(SK.s,settings);renderSettings();applyTimer();});
+  } else {settings.remindOn=!settings.remindOn;lsSet(SK.s,settings);renderSettings();applyTimer();}
+});
+document.querySelectorAll("#chip-row .chip").forEach(function(c){
+  c.addEventListener("click",function(){settings.intervalMin=Number(c.dataset.min);lsSet(SK.s,settings);renderSettings();applyTimer();});
+});
+document.getElementById("share-btn").addEventListener("click",function(){
+  var d={title:"Habitly",text:"Building daily habits with Habitly! 💪",url:location.href};
+  if(navigator.share)navigator.share(d).catch(function(){});
+  else navigator.clipboard?navigator.clipboard.writeText(d.url).then(function(){alert("✓ Link copied!");}).catch(function(){alert("Copy: "+d.url);}):alert("Copy: "+d.url);
+});
+
+init();
 </script>
 </body>
 </html>
